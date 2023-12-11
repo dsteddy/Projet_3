@@ -882,3 +882,45 @@ Read port: 62847
 DevTools listening on ws://127.0.0.1:62840/devtools/browser/379fd440-6356-48d8-8050-0976876302cd
 1702301689129	Marionette	INFO	Stopped listening on port 62847
 Dynamically enable window occlusion 1
+1702309106147	geckodriver	INFO	Listening on 127.0.0.1:65149
+1702309109230	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "65150" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileUqsmSk"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702309109444	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702309109508	Marionette	INFO	Listening on port 65158
+WebDriver BiDi listening on ws://127.0.0.1:65150
+Read port: 65158
+1702309109633	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:65150/devtools/browser/3bb5b9eb-5e21-4c52-9d2f-077192f668bf
+1702309112877	Marionette	INFO	Stopped listening on port 65158
+Dynamically enable window occlusion 1
+1702309351426	geckodriver	INFO	Listening on 127.0.0.1:65360
+1702309354501	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "65361" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofile1rrnWB"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702309354726	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702309354799	Marionette	INFO	Listening on port 65372
+WebDriver BiDi listening on ws://127.0.0.1:65361
+Read port: 65372
+1702309354918	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:65361/devtools/browser/475bc5ee-56d3-4795-b2d5-306817f09928
+1702309358282	Marionette	INFO	Stopped listening on port 65372
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-eec67f7c.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-eec67f7c.js:2:153983
+
+Dynamically enable window occlusion 1
+1702309404789	geckodriver	INFO	Listening on 127.0.0.1:49173
+1702309407843	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "49174" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileJcGzRo"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702309408053	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702309408121	Marionette	INFO	Listening on port 49182
+WebDriver BiDi listening on ws://127.0.0.1:49174
+Read port: 49182
+1702309408248	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:49174/devtools/browser/d5ea3358-f647-48e1-8dbb-d6549f46b6b0
+1702309411577	Marionette	INFO	Stopped listening on port 49182
+Dynamically enable window occlusion 1
