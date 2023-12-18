@@ -1020,3 +1020,256 @@ JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/ass
 r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js:2:153983
 
 Dynamically enable window occlusion 1
+1702567249855	geckodriver	INFO	Listening on 127.0.0.1:58116
+1702567252895	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "58117" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileq8mEc4"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702567253133	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702567253228	Marionette	INFO	Listening on port 58125
+WebDriver BiDi listening on ws://127.0.0.1:58117
+Read port: 58125
+1702567253353	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:58117/devtools/browser/3aa34a6c-c17b-4f20-b1d9-59f4f5133257
+1702567256593	Marionette	INFO	Stopped listening on port 58125
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js:2:153983
+
+Dynamically enable window occlusion 1
+1702567486623	geckodriver	INFO	Listening on 127.0.0.1:58282
+1702567489702	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "58283" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileJ9PTpN"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702567489932	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702567490005	Marionette	INFO	Listening on port 58291
+WebDriver BiDi listening on ws://127.0.0.1:58283
+Read port: 58291
+1702567490130	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:58283/devtools/browser/c9d8b806-eb7a-4b99-894e-6558454d78f1
+1702567493669	Marionette	INFO	Stopped listening on port 58291
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js:2:153983
+
+Dynamically enable window occlusion 1
+1702568917435	geckodriver	INFO	Listening on 127.0.0.1:58623
+1702568920500	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "58624" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileSKbWTa"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702568920729	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702568920797	Marionette	INFO	Listening on port 58631
+WebDriver BiDi listening on ws://127.0.0.1:58624
+Read port: 58631
+1702568920924	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:58624/devtools/browser/df616bf0-6d03-4436-bafa-8ca936250bbc
+1702568924352	Marionette	INFO	Stopped listening on port 58631
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js:2:153983
+
+Dynamically enable window occlusion 1
+1702568968787	geckodriver	INFO	Listening on 127.0.0.1:58708
+1702568971856	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "58709" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileIxvouY"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702568972097	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702568972163	Marionette	INFO	Listening on port 58718
+WebDriver BiDi listening on ws://127.0.0.1:58709
+Read port: 58718
+1702568972284	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:58709/devtools/browser/5e814f66-8705-43f3-86a0-4b4bf3167ee9
+1702568975575	Marionette	INFO	Stopped listening on port 58718
+Dynamically enable window occlusion 1
+1702569051461	geckodriver	INFO	Listening on 127.0.0.1:58811
+1702569054511	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "58812" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofile5EVvHX"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702569054756	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702569054823	Marionette	INFO	Listening on port 58820
+WebDriver BiDi listening on ws://127.0.0.1:58812
+Read port: 58820
+1702569054944	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:58812/devtools/browser/55e8db76-2e24-487b-958c-09f998a28a7b
+1702569058282	Marionette	INFO	Stopped listening on port 58820
+Dynamically enable window occlusion 1
+1702569580031	geckodriver	INFO	Listening on 127.0.0.1:58963
+1702569583123	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "58964" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofile04xGJr"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702569583384	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702569583453	Marionette	INFO	Listening on port 58972
+Read port: 58972
+WebDriver BiDi listening on ws://127.0.0.1:58964
+1702569583492	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:58964/devtools/browser/c3126dc4-7d69-4629-bd95-2054b718004c
+1702569586940	Marionette	INFO	Stopped listening on port 58972
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js:2:153983
+
+Dynamically enable window occlusion 1
+1702569600581	geckodriver	INFO	Listening on 127.0.0.1:59046
+1702569603650	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "59047" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofile3caPAj"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702569603903	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702569603969	Marionette	INFO	Listening on port 59055
+WebDriver BiDi listening on ws://127.0.0.1:59047
+Read port: 59055
+1702569604096	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:59047/devtools/browser/ab2506a5-8bd9-4f3b-b815-fdd9d1e00317
+1702569607465	Marionette	INFO	Stopped listening on port 59055
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js:2:153983
+
+Dynamically enable window occlusion 1
+1702569708249	geckodriver	INFO	Listening on 127.0.0.1:59144
+1702569711316	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "59145" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofile2mTJmC"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702569711549	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702569711615	Marionette	INFO	Listening on port 59152
+WebDriver BiDi listening on ws://127.0.0.1:59145
+Read port: 59152
+1702569711738	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:59145/devtools/browser/230c8f66-405a-4a9a-aab4-0433fe6d9be4
+1702569715244	Marionette	INFO	Stopped listening on port 59152
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js:2:153983
+
+Dynamically enable window occlusion 1
+1702569746277	geckodriver	INFO	Listening on 127.0.0.1:59230
+1702569749341	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "59231" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofile0nNwc2"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702569749577	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702569749644	Marionette	INFO	Listening on port 59238
+WebDriver BiDi listening on ws://127.0.0.1:59231
+Read port: 59238
+1702569749772	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:59231/devtools/browser/ae80caa5-1be2-41b8-be56-903148d9a1fb
+1702569753126	Marionette	INFO	Stopped listening on port 59238
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-2f2e0be6.js:2:153983
+
+Dynamically enable window occlusion 1
+1702570448916	geckodriver	INFO	Listening on 127.0.0.1:51540
+1702570451991	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "51541" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileLOmI87"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702570452217	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702570452288	Marionette	INFO	Listening on port 51550
+WebDriver BiDi listening on ws://127.0.0.1:51541
+Read port: 51550
+1702570452406	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:51541/devtools/browser/8eb34790-5c2e-4d88-86db-9701dd383ebd
+1702570455772	Marionette	INFO	Stopped listening on port 51550
+Dynamically enable window occlusion 1
+1702639221605	geckodriver	INFO	Listening on 127.0.0.1:59038
+1702639224688	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "59039" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileBVIKRq"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702639225236	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702639225312	Marionette	INFO	Listening on port 59046
+WebDriver BiDi listening on ws://127.0.0.1:59039
+Read port: 59046
+1702639225460	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:59039/devtools/browser/b39d8e15-c4fe-46e3-8dee-081b71be1e6c
+1702639228637	Marionette	INFO	Stopped listening on port 59046
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-f6f8e450.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-f6f8e450.js:2:153983
+
+Dynamically enable window occlusion 1
+1702639376475	geckodriver	INFO	Listening on 127.0.0.1:59143
+1702639379548	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "59144" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileMJoxfy"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702639379764	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702639379831	Marionette	INFO	Listening on port 59151
+WebDriver BiDi listening on ws://127.0.0.1:59144
+Read port: 59151
+1702639379949	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:59144/devtools/browser/53ba2ca8-4f7b-44d3-9bf4-54bdcfc05643
+1702639383072	Marionette	INFO	Stopped listening on port 59151
+Dynamically enable window occlusion 1
+1702639574815	geckodriver	INFO	Listening on 127.0.0.1:59317
+1702639577872	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "59318" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileZ9WcB2"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702639578084	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702639578150	Marionette	INFO	Listening on port 59325
+WebDriver BiDi listening on ws://127.0.0.1:59318
+Read port: 59325
+1702639578268	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:59318/devtools/browser/ab4bda5f-c6af-40f5-b5bf-219a6a98a40c
+1702639585016	Marionette	INFO	Stopped listening on port 59325
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-f6f8e450.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-f6f8e450.js:2:153983
+
+Dynamically enable window occlusion 1
+1702906952028	geckodriver	INFO	Listening on 127.0.0.1:55678
+1702906955125	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "55679" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileUM3Cia"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702906955738	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702906955842	Marionette	INFO	Listening on port 55686
+WebDriver BiDi listening on ws://127.0.0.1:55679
+Read port: 55686
+1702906956145	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:55679/devtools/browser/d12c12e3-344c-4624-bd36-09afcff6b753
+1702906966467	Marionette	INFO	Stopped listening on port 55686
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js, line 2: Script terminated by timeout at:
+h@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:95618
+setValue@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:107563
+O/xe/qn</<@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:156631
+ou@https://cdn.welcometothejungle.com/wttj-front/production/assets/framework-119a0d01.js:2:136227
+xs@https://cdn.welcometothejungle.com/wttj-front/production/assets/framework-119a0d01.js:2:156359
+yl30/Es/<@https://cdn.welcometothejungle.com/wttj-front/production/assets/framework-119a0d01.js:2:152961
+j@https://cdn.welcometothejungle.com/wttj-front/production/assets/shared-client-organizations-embed-6e801a77.js:2:52333
+R@https://cdn.welcometothejungle.com/wttj-front/production/assets/shared-client-organizations-embed-6e801a77.js:2:52864
+
+Dynamically enable window occlusion 1
+1702906982624	geckodriver	INFO	Listening on 127.0.0.1:55884
+1702906985686	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "55885" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileOMeRBj"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1702906985901	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1702906985968	Marionette	INFO	Listening on port 55893
+WebDriver BiDi listening on ws://127.0.0.1:55885
+Read port: 55893
+1702906986089	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+DevTools listening on ws://127.0.0.1:55885/devtools/browser/9536da85-28ed-4b82-84c7-29f52729311b
+1702906995275	Marionette	INFO	Stopped listening on port 55893
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js, line 2: Script terminated by timeout at:
+e@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:155938
+/0+J/o/</<@https://cdn.welcometothejungle.com/wttj-front/production/assets/shared--d68b7891.js:2:169751
+/0+J/o/<@https://cdn.welcometothejungle.com/wttj-front/production/assets/shared--d68b7891.js:2:169716
+O/xe/qn</F<@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:156249
+O/xe/L/</</<@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:97520
+fs@https://cdn.welcometothejungle.com/wttj-front/production/assets/framework-119a0d01.js:2:149174
+yl30/t.flushSync@https://cdn.welcometothejungle.com/wttj-front/production/assets/framework-119a0d01.js:2:170808
+O/xe/L/</</<@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:97485
+O/xe/L/</<@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:97513
+p@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:95606
+O/xe/k/h/<@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:95631
+h@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:95618
+setValue@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:107563
+O/xe/qn</<@https://cdn.welcometothejungle.com/wttj-front/production/assets/commons-def377ee.js:2:156631
+ou@https://cdn.welcometothejungle.com/wttj-front/production/assets/framework-119a0d01.js:2:136227
+xs@https://cdn.welcometothejungle.com/wttj-front/production/assets/framework-119a0d01.js:2:156359
+yl30/Es/<@https://cdn.welcometothejungle.com/wttj-front/production/assets/framework-119a0d01.js:2:152961
+j@https://cdn.welcometothejungle.com/wttj-front/production/assets/shared-client-organizations-embed-6e801a77.js:2:52333
+R@https://cdn.welcometothejungle.com/wttj-front/production/assets/shared-client-organizations-embed-6e801a77.js:2:52864
+
+Dynamically enable window occlusion 1
