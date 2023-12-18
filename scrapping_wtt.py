@@ -9,7 +9,13 @@ import pandas as pd
 import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
+import logging
 
+logging.basicConfig(
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 def create_cols_to_keep(site):
     if site == "welcome to the jungle":
@@ -48,17 +54,26 @@ def create_cols_to_keep(site):
 
 
 async def fetch(session, url):
-    async with session.get(url) as response:
-        return await response.json()
+    logging.info("Gathering information from API...")
+    while True:
+        async with session.get(url) as response:
+            if response.status == 429:
+                logging.error("API Limit reached!")
+                await asyncio.sleep(10)
+                continue
+            return await response.json()
 
 
 async def fetch_all(api_links, cols_to_keep):
     async with aiohttp.ClientSession() as session:
         tasks = [fetch(session, link) for link in api_links]
         responses = await asyncio.gather(*tasks)
+    logging.info("API requests done!")
+    logging.info("Concatening dataframes...")
     full_df = pd.concat([pd.json_normalize(resp["job"]) for resp in responses], ignore_index=True)
     cols_to_drop = [col for col in full_df.columns if col not in cols_to_keep]
     df = full_df.drop(columns=cols_to_drop)
+    logging.info("DataFrame done!")
     return df
 
 
@@ -74,7 +89,7 @@ def job_offers_wtj(
     # Instanciation du driver Firefox.
     driver = webdriver.Firefox()
     # Nom des colonnes à garder dans le dataframe final.
-
+    logging.info(f"Starting job offer scrapping for {i} pages...")
     try:
         for i in range(1, pages+1):
             url = f"https://www.welcometothejungle.com/fr/jobs?refinementList%5Boffices.country_code%5D%5B%5D=FR&query={job}&page={i}"
@@ -92,17 +107,20 @@ def job_offers_wtj(
                     # Rajoute le lien de chaque offre à la liste.
                     api_links.append(full_link)
             except Exception as e:
-                print(f"Error scraping page {i} : {e}")
+                logging.error(f"Error scraping page {i} : {e}")
     finally:
         driver.quit()
         # Pour chaque lien de la liste, fait une requête API et stocke les informations dans un dataframe.
+    logging.info("Scrapping done!")
     return api_links
 
 
 def clean_html(text):
+    logging.info("Cleaning columns...")
     soup = BeautifulSoup(text, 'html.parser')
     cleaned_text = soup.get_text(separator=" ")
     cleaned_text = cleaned_text.replace("\xa0", " ")
+    logging.info("Cleaning done!")
     return cleaned_text
 
 
@@ -111,5 +129,6 @@ api_links = job_offers_wtj("data analyst", 5)
 df = asyncio.run(fetch_all(api_links, cols_to_keep))
 df["description"] = df["description"].apply(clean_html)
 df["organization.description"] = df["organization.description"].apply(clean_html)
-
+logging.info("Saving CSV...")
 df.to_csv("WTT_offers.csv")
+logging.info("Done!")
