@@ -35,7 +35,7 @@ def create_cols_to_keep(site: str):
         "contract_duration_min",
         "office.city",
         "office.zip_code",
-        "profession.category.fr",
+        # "profession.category.fr",
         "education_level",
         "description",
         "organization.description",
@@ -55,10 +55,13 @@ def create_cols_to_keep(site: str):
                 "romeLibelle",
                 "origineOffre",
                 "appellationlibelle",
+                "natureContrat",
                 "entreprise",
                 "typeContratLibelle",
                 "experienceExige",
                 "experienceLibelle",
+                "dureeTravail",
+                "dureeTravailLibelleConverti",
                 "formations",
                 "langues",
                 "salaire",
@@ -110,6 +113,20 @@ async def fetch_all(api_links, cols_to_keep):
     logging.info("DataFrame done!")
     df["description"] = df["description"].apply(clean_html)
     df["organization.description"] = df["organization.description"].apply(clean_html)
+    df.rename(
+    {
+        'education_level' : 'niveau_etudes',
+        'contract_type' : 'type_contrat',
+        'name' : 'intitule',
+        'published_at' : 'date_publication',
+        'updated_at' : 'date_modif',
+        'experience_level' : 'experience',
+        'office.city' : 'ville',
+        'office.zip_code' : 'code_postal',
+        'organization.description' : 'description_entreprise',
+        'organization.industry' : 'secteur_activite'
+        }, axis = 1, inplace = True
+    )
     return df
 
 
@@ -157,7 +174,7 @@ def clean_dict_columns(df: pd.DataFrame):
     df['dateActualisation'] = pd.to_datetime(df['dateActualisation'])
     df['dateCreation'] = pd.to_datetime(df['dateCreation'])
     df_lieu_travail = pd.json_normalize(df["lieuTravail"])
-    df_lieu_travail.drop(["latitude", "longitude"], axis=1, inplace=True)
+    df_lieu_travail.drop(["latitude", "longitude", "commune"], axis=1, inplace=True)
     df_entreprise = pd.json_normalize(df["entreprise"])
     df_entreprise.drop(["entrepriseAdaptee", 'url', 'logo'], axis=1, inplace=True)
     df_salaire = pd.json_normalize(df["salaire"])
@@ -198,6 +215,20 @@ def job_offers_pole_emploi(params, cols_to_drop):
             df_emploi = pd.DataFrame(results)
             df_final = clean_dict_columns(df_emploi)
             df_final.drop(cols_to_drop, axis=1, inplace=True)
+            df_final.rename(
+                {
+                    'dateCreation' : 'date_publication',
+                    'dateActualisation' : 'date_modif',
+                    'typeContrat' : 'type_contrat',
+                    'dureeTravailLibelle' : 'secteur_activite',
+                    'niveauLibelle' : 'niveau_etudes',
+                    'libelle' : 'salaire',
+                    'nom' : 'entreprise',
+                    'description.1' : 'description_entreprise',
+                    'libelle.1' : 'ville',
+                    'codePostal' : 'code_postal'
+                }, axis = 1, inplace = True
+            )
             return df_final
 
         else:
@@ -208,15 +239,3 @@ def job_offers_pole_emploi(params, cols_to_drop):
         print(f"Une erreur s'est produite lors de la recherche : {e}")
 
 
-
-# cols_to_keep = create_cols_to_keep("welcome to the jungle")
-# api_links = job_offers_wtj("data analyst", 10)
-# logging.info("Gathering information from API...")
-# df = asyncio.run(fetch_all(api_links, cols_to_keep))
-# logging.info("Cleaning columns...")
-# df["description"] = df["description"].apply(clean_html)
-# df["organization.description"] = df["organization.description"].apply(clean_html)
-# logging.info("Cleaning done!")
-# logging.info("Saving CSV...")
-# df.to_csv("WTT_offers.csv", index=False)
-# logging.info("Done!")
