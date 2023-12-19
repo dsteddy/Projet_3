@@ -5,7 +5,7 @@ import datetime
 from scrapping import (
     create_cols_to_keep,
     fetch_all,
-    job_offers_wtj,
+    job_offers_wttj,
     job_offers_pole_emploi,
 )
 
@@ -13,11 +13,11 @@ from scrapping import (
 job_title = "data analyst"
 
 # Scrapping Welcome To The Jungle
-cols_to_keep = create_cols_to_keep('wtt')
-api_links = job_offers_wtj(job_title, 10)
+cols_to_keep = create_cols_to_keep('wttj')
+api_links = job_offers_wttj(job_title, 10)
 
 df_wtt = asyncio.run(fetch_all(api_links, cols_to_keep))
-df_wtt.to_csv('WTT_offers.csv', index=False)
+df_wtt.to_csv('datasets/WTTJ_offers.csv', index=False)
 
 # Scrapping Pole Emploi
 cols_to_drop = create_cols_to_keep('pole emploi')
@@ -30,4 +30,4 @@ params = {
     "maxCreationDate" : dt_to_str_iso(end_dt),
 }
 df_pole_emploi = job_offers_pole_emploi(params, cols_to_drop)
-df_pole_emploi.to_csv('Pole_Emploi_offers.csv', index=False)
+df_pole_emploi.to_csv('datasets/Pole_Emploi_offers.csv', index=False)

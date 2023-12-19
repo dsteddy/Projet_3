@@ -1,15 +1,12 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 
 from offres_emploi import Api
-from offres_emploi.utils import dt_to_str_iso
 
 import re
-import requests
 
 import pandas as pd
 
@@ -27,7 +24,7 @@ logging.basicConfig(
 )
 
 def create_cols_to_keep(site: str):
-    if site == "wtt":
+    if site == "wttj":
         cols_to_keep = [
         "published_at",
         "updated_at",
@@ -116,7 +113,7 @@ async def fetch_all(api_links, cols_to_keep):
     return df
 
 
-def job_offers_wtj(
+def job_offers_wttj(
         job_title: str = "data analyst",
         pages: int = 1
 ):
@@ -138,7 +135,7 @@ def job_offers_wtj(
             driver.get(url)
             try:
                 # Récupère le lien de chaque offre d'emploi sur la page.
-                contents = WebDriverWait(driver, 75).until(
+                contents = WebDriverWait(driver, 100).until(
                     EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".sc-6i2fyx-0.gIvJqh"))
                 )
                 for content in contents:
