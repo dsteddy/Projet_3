@@ -1570,3 +1570,42 @@ JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/ass
 r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-b86da1de.js:2:159893
 
 Dynamically enable window occlusion 1
+1703002308785	geckodriver	INFO	Listening on 127.0.0.1:53133
+1703002311883	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "53134" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofilejzAftg"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1703002312095	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1703002312138	Marionette	INFO	Listening on port 53142
+WebDriver BiDi listening on ws://127.0.0.1:53134
+Read port: 53142
+1703002312257	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+DevTools listening on ws://127.0.0.1:53134/devtools/browser/3259aef7-c48e-4741-9374-be007f224fd3
+JavaScript error: , line 0: TypeError: NetworkError when attempting to fetch resource.
+1703002328861	Marionette	INFO	Stopped listening on port 53142
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-b86da1de.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-b86da1de.js:2:159893
+
+Dynamically enable window occlusion 1
+1703002640329	geckodriver	INFO	Listening on 127.0.0.1:53444
+1703002643416	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "53445" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileR3hbBQ"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1703002643627	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1703002643670	Marionette	INFO	Listening on port 53453
+WebDriver BiDi listening on ws://127.0.0.1:53445
+Read port: 53453
+1703002643789	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+DevTools listening on ws://127.0.0.1:53445/devtools/browser/7552bef2-6e04-4f04-b5f8-84ddbf50a3d5
+1703002653924	Marionette	INFO	Stopped listening on port 53453
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/695-b86da1de.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/695-b86da1de.js:2:159893
+
+Dynamically enable window occlusion 1

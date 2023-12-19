@@ -14,10 +14,10 @@ job_title = "data analyst"
 
 # Scrapping Welcome To The Jungle
 cols_to_keep = create_cols_to_keep('wttj')
-api_links = job_offers_wttj(job_title, 10)
+api_links = job_offers_wttj(job_title, 5)
 
-df_wtt = asyncio.run(fetch_all(api_links, cols_to_keep))
-df_wtt.to_csv('datasets/WTTJ_offers.csv', index=False)
+df_wttj = asyncio.run(fetch_all(api_links, cols_to_keep))
+df_wttj.to_csv('datasets/WTTJ_offers.csv', index=False)
 
 # Scrapping Pole Emploi
 cols_to_drop = create_cols_to_keep('pole emploi')
