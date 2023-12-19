@@ -3,6 +3,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.firefox.options import Options
+
 import re
 import requests
 import pandas as pd
@@ -20,6 +22,8 @@ logging.basicConfig(
 def create_cols_to_keep(site):
     if site == "welcome to the jungle":
         cols_to_keep = [
+        "published_at",
+        "updated_at",
         "name",
         "salary_period",
         "experience_level",
@@ -54,7 +58,6 @@ def create_cols_to_keep(site):
 
 
 async def fetch(session, url):
-    logging.info("Gathering information from API...")
     while True:
         async with session.get(url) as response:
             if response.status == 429:
@@ -87,9 +90,11 @@ def job_offers_wtj(
     api_link = f"https://api.welcometothejungle.com/api/v1/organizations"
     job = job_title.lower().replace(" ", "+")
     # Instanciation du driver Firefox.
-    driver = webdriver.Firefox()
+    firefox_options = Options()
+    firefox_options.headless = True
+    driver = webdriver.Firefox(options=firefox_options)
     # Nom des colonnes à garder dans le dataframe final.
-    logging.info(f"Starting job offer scrapping for {i} pages...")
+    logging.info(f"Starting job offer scrapping for {pages} pages...")
     try:
         for i in range(1, pages+1):
             url = f"https://www.welcometothejungle.com/fr/jobs?refinementList%5Boffices.country_code%5D%5B%5D=FR&query={job}&page={i}"
@@ -116,19 +121,20 @@ def job_offers_wtj(
 
 
 def clean_html(text):
-    logging.info("Cleaning columns...")
     soup = BeautifulSoup(text, 'html.parser')
     cleaned_text = soup.get_text(separator=" ")
     cleaned_text = cleaned_text.replace("\xa0", " ")
-    logging.info("Cleaning done!")
     return cleaned_text
 
 
 cols_to_keep = create_cols_to_keep("welcome to the jungle")
-api_links = job_offers_wtj("data analyst", 5)
+api_links = job_offers_wtj("data analyst", 1)
+logging.info("Gathering information from API...")
 df = asyncio.run(fetch_all(api_links, cols_to_keep))
+logging.info("Cleaning columns...")
 df["description"] = df["description"].apply(clean_html)
 df["organization.description"] = df["organization.description"].apply(clean_html)
+logging.info("Cleaning done!")
 logging.info("Saving CSV...")
-df.to_csv("WTT_offers.csv")
+df.to_csv("WTT_offers.csv", index=False)
 logging.info("Done!")
