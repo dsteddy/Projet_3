@@ -30,4 +30,4 @@ params = {
     "maxCreationDate" : dt_to_str_iso(end_dt),
 }
 df_pole_emploi = job_offers_pole_emploi(params, cols_to_drop)
-df_pole_emploi.to_csv('datasets/Pole_Emploi_offers.csv', index=False)
+df_pole_emploi.to_csv('datasets/pole_emploi_offers.csv', index=False)

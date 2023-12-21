@@ -175,8 +175,10 @@ def clean_dict_columns(df: pd.DataFrame):
     df['dateCreation'] = pd.to_datetime(df['dateCreation'])
     df_lieu_travail = pd.json_normalize(df["lieuTravail"])
     df_lieu_travail.drop(["latitude", "longitude", "commune"], axis=1, inplace=True)
+    df_lieu_travail.rename({"libelle" : "ville"}, axis = 1, inplace = True)
     df_entreprise = pd.json_normalize(df["entreprise"])
     df_entreprise.drop(["entrepriseAdaptee", 'url', 'logo'], axis=1, inplace=True)
+    df_entreprise.rename({"description" : "description_entreprise"}, axis=1, inplace=True)
     df_salaire = pd.json_normalize(df["salaire"])
     df_salaire.drop(["complement1", "complement2", "commentaire"], axis=1, inplace=True)
     df_formations = df["formations"].explode()
@@ -219,13 +221,13 @@ def job_offers_pole_emploi(params, cols_to_drop):
                 {
                     'dateCreation' : 'date_publication',
                     'dateActualisation' : 'date_modif',
-                    'typeContrat' : 'type_contrat',
-                    'dureeTravailLibelle' : 'secteur_activite',
+                    'typeContrat' : 'contrat',
+                    "dureeTravailLibelle" : "duree_travail",
+                    "dureeTravailLibelleConverti" : "type_contrat",
+                    'secteurActiviteLibelle' : 'secteur_activite',
                     'niveauLibelle' : 'niveau_etudes',
                     'libelle' : 'salaire',
                     'nom' : 'entreprise',
-                    'description.1' : 'description_entreprise',
-                    'libelle.1' : 'ville',
                     'codePostal' : 'code_postal'
                 }, axis = 1, inplace = True
             )
