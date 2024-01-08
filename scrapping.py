@@ -152,7 +152,7 @@ def job_offers_wttj(
             driver.get(url)
             try:
                 # Récupère le lien de chaque offre d'emploi sur la page.
-                contents = WebDriverWait(driver, 100).until(
+                contents = WebDriverWait(driver, 30).until(
                     EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".sc-6i2fyx-0.gIvJqh"))
                 )
                 for content in contents:
