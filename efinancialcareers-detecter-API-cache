@@ -1,0 +1,45 @@
+import requests # communique avec site web
+import pandas as pd # pandas
+import re # RegEx
+from tqdm import tqdm # barre de progression
+from bs4 import BeautifulSoup
+from pprint import pprint # permet de faire de meilleur print
+import random # pour faire des requettes random type de navigateur
+
+
+def extract_data_efinance(search='data%20analyst'):
+    # liste vide de df
+    liste_df = []
+
+    # boucle sur les pages
+    for p in tqdm(range(1, 6)):
+
+        try:
+            url = f"https://job-search-api.efinancialcareers.com/v1/efc/jobs/search?q={search}&countryCode2=FR&radius=40&radiusUnit=km&page={p}&pageSize=15&facets=locationPath%7CsalaryRange%7Csectors%7CemploymentType%7CexperienceLevel%7CworkArrangementType%7CsalaryCurrency%7CminSalary%7CmaxSalary%7CpositionType%7CpostedDate%7CclientBrandNameFilter&currencyCode=EUR&culture=fr&recommendations=true&fj=false&includeRemote=false&includeUnspecifiedSalary=true"
+
+            # simule un navigateur
+            header = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0",
+                      "Referer": "https://www.efinancialcareers.fr/"}
+
+            # request et vérifie la réponse du navigateur
+            r = requests.get(url, headers=header)
+
+            # get json content
+            r_js = r.json()
+
+            # recuperer le json sous forme de df
+            df = pd.json_normalize(r_js['data'])
+
+            # ajoute chaque df
+            liste_df.append(df)
+
+        except:
+            # pass à l'itération suivante en cas d'erreur
+            continue
+
+    return pd.concat(liste_df).reset_index(drop=True)
+
+# Appeler la fonction et afficher le DataFrame résultant
+df_result = extract_data_efinance()
+
+df_result
