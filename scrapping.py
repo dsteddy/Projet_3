@@ -102,6 +102,7 @@ async def fetch(session, url):
 
 
 async def fetch_all(api_links, cols_to_keep):
+    logging.info("API requests...")
     async with aiohttp.ClientSession() as session:
         tasks = [fetch(session, link) for link in api_links]
         responses = await asyncio.gather(*tasks)
@@ -144,7 +145,7 @@ def job_offers_wttj(
     firefox_options.headless = True
     driver = webdriver.Firefox(options=firefox_options)
     # Nom des colonnes à garder dans le dataframe final.
-    logging.info(f"Starting job offer scrapping for {pages} pages...")
+    logging.info(f"Starting job offer scrapping for {pages} pages on Welcome To The Jungle...")
     try:
         for i in range(1, pages+1):
             url = f"https://www.welcometothejungle.com/fr/jobs?refinementList%5Boffices.country_code%5D%5B%5D=FR&query={job}&page={i}"
@@ -195,7 +196,7 @@ def job_offers_pole_emploi(params, cols_to_drop):
     max_results = float('inf')
     api_client = Api(client_id="PAR_datajobs_addbc0bc41d7d51f05b218a78c5a95e14be4d73d536fde31c5962de09420f7ba",
              client_secret="ec561083589b4912fb4feebf33ef1078098c0b8b3f8ff04a665d3e46173f11e1")
-
+    logging.info("Requesting Pole Emploi API...")
     try:
         # Pagination pour récupérer tous les résultats
         while start_range < max_results:
@@ -231,6 +232,7 @@ def job_offers_pole_emploi(params, cols_to_drop):
                     'codePostal' : 'code_postal'
                 }, axis = 1, inplace = True
             )
+            logging.info("Dataframe Created!")
             return df_final
 
         else:
