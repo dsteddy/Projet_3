@@ -31,11 +31,13 @@ params = {
 }
 df_pole_emploi = job_offers_pole_emploi(params, cols_to_drop)
 
+# Sauvegarde des .parquet files
 logging.info("Saving CSV files...")
 df_pole_emploi.to_parquet('datasets/pole_emploi_offers.parquet', index=False)
 df_wttj.to_parquet('datasets/WTTJ_offers.parquet', index=False)
 logging.info("CSV file created!")
 
+# Création de la BDD SQL
 logging.info("Creating SQL Database...")
 engine = sqlalchemy.create_engine('sqlite:///database/job_offers.db')
 df_pole_emploi.to_sql('pole_emploi', con=engine, index=False, if_exists='replace')
