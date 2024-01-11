@@ -4,4 +4,4 @@
 # Ignore logs and temporary files
 *.log
 
-/testss
+/tests
