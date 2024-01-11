@@ -1,0 +1,7 @@
+# Environments
+.env
+
+# Ignore logs and temporary files
+*.log
+
+/tests
