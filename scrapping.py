@@ -15,6 +15,9 @@ import aiohttp
 
 from bs4 import BeautifulSoup
 
+from tqdm import tqdm
+import time
+
 import logging
 
 logging.basicConfig(
@@ -26,24 +29,24 @@ logging.basicConfig(
 def create_cols_to_keep(site: str):
     if site == "wttj":
         cols_to_keep = [
-        "published_at",
-        "updated_at",
-        "name",
-        "salary_period",
-        "experience_level",
+        "published_at",                 # date_publication
+        "updated_at",                   # date_modif
+        "name",                         # intitule
+        "salary_period",                # salaire
+        # "experience_level",
         # "apply_url",
-        "contract_duration_min",
-        "office.city",
-        "office.zip_code",
+        # "contract_duration_min",
+        "office.city",                  # ville
+        "office.zip_code",              # code postal
         # "profession.category.fr",
-        "education_level",
-        "description",
-        "organization.description",
-        "organization.industry",
-        "contract_type",
-        "salary_min",
-        "salary_max",
-        "education_level"
+        "education_level",              # niveau_etudes
+        "description",                  # description
+        "organization.name",            # entreprise
+        "organization.description",     # description_entreprise
+        "organization.industry",        # secteur_activite
+        "contract_type",                # contract_type
+        "salary_min",                   # salaire(2)
+        "salary_max",                   # salaire(3)
     ]
         return cols_to_keep
 
@@ -79,7 +82,9 @@ def create_cols_to_keep(site: str):
                 "offresManqueCandidats",
                 "experienceCommentaire",
                 "permis",
-                "complementExercice"
+                "complementExercice",
+                "competences",
+                "agence",
             ]
         return cols_to_drop
 
@@ -87,18 +92,21 @@ def create_cols_to_keep(site: str):
 def clean_html(text):
     soup = BeautifulSoup(text, 'html.parser')
     cleaned_text = soup.get_text(separator=" ")
-    cleaned_text = cleaned_text.replace("\xa0", " ")
+    cleaned_text = cleaned_text.replace("\xa0", " ").replace("\n", "")
     return cleaned_text
 
 
 async def fetch(session, url):
     while True:
-        async with session.get(url) as response:
-            if response.status == 429:
-                logging.error("API Limit reached!")
-                await asyncio.sleep(10)
-                continue
-            return await response.json()
+        try:
+            async with session.get(url) as response:
+                if response.status == 429:
+                    logging.error("API Limit reached!")
+                    await asyncio.sleep(30)
+                    continue
+                return await response.json()
+        except:
+            await asyncio.sleep(30)
 
 
 async def fetch_all(api_links, cols_to_keep):
@@ -108,7 +116,7 @@ async def fetch_all(api_links, cols_to_keep):
         responses = await asyncio.gather(*tasks)
     logging.info("API requests done!")
     logging.info("Concatening dataframes...")
-    full_df = pd.concat([pd.json_normalize(resp["job"]) for resp in responses], ignore_index=True)
+    full_df = pd.concat([pd.json_normalize(resp["job"]) for resp in responses if "job" in resp], ignore_index=True)
     cols_to_drop = [col for col in full_df.columns if col not in cols_to_keep]
     df = full_df.drop(columns=cols_to_drop)
     logging.info("DataFrame done!")
@@ -117,23 +125,35 @@ async def fetch_all(api_links, cols_to_keep):
     df.rename(
     {
         'education_level' : 'niveau_etudes',
-        'contract_type' : 'type_contrat',
+        'contract_type' : 'contrat',
         'name' : 'intitule',
         'published_at' : 'date_publication',
         'updated_at' : 'date_modif',
         'experience_level' : 'experience',
         'office.city' : 'ville',
         'office.zip_code' : 'code_postal',
+        "organization.name" : "entreprise",
         'organization.description' : 'description_entreprise',
         'organization.industry' : 'secteur_activite'
         }, axis = 1, inplace = True
+    )
+    liste_cols = create_liste_cols()
+    df = df[liste_cols]
+    df["niveau_etudes"] = df["niveau_etudes"].astype(str)
+    df["niveau_etudes"] = df["niveau_etudes"].apply(clean_experience)
+    df["contrat"] = df["contrat"].str.replace(
+        "full_time", "cdi"
+        ).str.replace("internship", "Stage"
+        ).str.replace("apprenticeship", "Alternance"
+        ).str.replace("temporary", "CDD"
+        ).str.replace("other", "Autre"
+        ).str.replace("vie", "CDI"
     )
     return df
 
 
 def job_offers_wttj(
-        job_title: str = "data analyst",
-        pages: int = 1
+        job_title: str = "data analyst"
 ):
     # Instanciation de la liste contenant les liens pour les requêtes APIs.
     api_links = []
@@ -144,10 +164,21 @@ def job_offers_wttj(
     firefox_options = Options()
     firefox_options.headless = True
     driver = webdriver.Firefox(options=firefox_options)
-    # Nom des colonnes à garder dans le dataframe final.
-    logging.info(f"Starting job offer scrapping for {pages} pages on Welcome To The Jungle...")
+    # Ouverture de la première page.
+    url = f"https://www.welcometothejungle.com/fr/jobs?refinementList%5Boffices.country_code%5D%5B%5D=FR&query={job}&page=1"
+    driver.get(url)
     try:
-        for i in range(1, pages+1):
+        # Récupère le numéro de la dernière page.
+        logging.info("Checking page numbers...")
+        page_numbers = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".sc-ezreuY.gGgoDq"))
+        )
+        page_max = int(page_numbers[-1].text)
+        logging.info(f"Starting job offer scrapping for {page_max} pages on Welcome To The Jungle...")
+    except:
+        logging.info("Page number not found, scrapping for 1 page on Welcome To The Jungle...")
+    try:
+        for i in tqdm(range(1, page_max+1), desc="Pages Scrapped", unit="page"):
             url = f"https://www.welcometothejungle.com/fr/jobs?refinementList%5Boffices.country_code%5D%5B%5D=FR&query={job}&page={i}"
             # Ouvre chaque page sur le navigateur.
             driver.get(url)
@@ -229,10 +260,18 @@ def job_offers_pole_emploi(params, cols_to_drop):
                     'niveauLibelle' : 'niveau_etudes',
                     'libelle' : 'salaire',
                     'nom' : 'entreprise',
-                    'codePostal' : 'code_postal'
+                    # 'codePostal' : 'code_postal'
                 }, axis = 1, inplace = True
             )
             logging.info("Dataframe Created!")
+            liste_cols = create_liste_cols()
+            df_final = df_final[liste_cols]
+            df_final["description"] = df_final["description"].apply(clean_html)
+            # df_final["code_postal"] = df_final["code_postal"].astype(str)
+            df_final["niveau_etudes"] = df_final["niveau_etudes"].astype(str)
+            df_final["niveau_etudes"] = df_final["niveau_etudes"].apply(clean_experience)
+            df_final["ville"] = df_final["ville"].str.title().str.replace(r"\d+", "", regex=True).str.replace("-", "").str.strip()
+            df_final["contrat"] = df_final["contrat"].str.replace("MIS", "Interim").str.replace("FRA", "Autre").str.replace("LIB", "Autre")
             return df_final
 
         else:
@@ -243,3 +282,34 @@ def job_offers_pole_emploi(params, cols_to_drop):
         print(f"Une erreur s'est produite lors de la recherche : {e}")
 
 
+def create_liste_cols():
+    liste_cols = [
+        "date_publication",
+        "contrat",
+        # "type_contrat",
+        "intitule",
+        "description",
+        "secteur_activite",
+        "niveau_etudes",
+        # "salaire",
+        "entreprise",
+        "description_entreprise",
+        "ville",
+        # "code_postal",
+        "date_modif",
+    ]
+    return liste_cols
+
+
+def clean_experience(text):
+    text = text.lower().strip()
+    if "bac+5" in text or "bac_5" in text:
+        return "Bac +5"
+    if "bac+4" in text or "bac_4" in text:
+        return "Bac +4"
+    if "bac+3" in text or "bac_3" in text:
+        return "Bac +3"
+    if "bac+2" in text or "bac_2" in text:
+        return "Bac +2"
+    else:
+        return None

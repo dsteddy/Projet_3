@@ -1,6 +1,6 @@
 import asyncio
-from offres_emploi.utils import dt_to_str_iso
-import datetime
+# from offres_emploi.utils import dt_to_str_iso
+# import datetime
 
 from scrapping import (
     create_cols_to_keep,
@@ -22,7 +22,7 @@ job_title = "data analyst"
 
 # Scrapping Welcome To The Jungle
 cols_to_keep = create_cols_to_keep('wttj')
-api_links = job_offers_wttj(job_title, 5)
+api_links = job_offers_wttj(job_title)
 
 df_wttj = asyncio.run(fetch_all(api_links, cols_to_keep))
 
@@ -39,6 +39,6 @@ params = {
 df_pole_emploi = job_offers_pole_emploi(params, cols_to_drop)
 
 logging.info("Saving CSV files...")
-df_pole_emploi.to_csv('datasets/pole_emploi_offers.csv', index=False)
-df_wttj.to_csv('datasets/WTTJ_offers.csv', index=False)
+df_pole_emploi.to_parquet('datasets/pole_emploi_offers.parquet', index=False)
+df_wttj.to_parquet('datasets/WTTJ_offers.parquet', index=False)
 logging.info("CSV file created!")
