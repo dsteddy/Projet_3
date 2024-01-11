@@ -1,23 +1,7 @@
-# Ignore compiled Python files
-*.pyc
-
-# Ignore virtual environment folder
-venv/
-
 # Environments
 .env
-.venv
-.venv_ml
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-pythonenv*
 
 # Ignore logs and temporary files
 *.log
-*.swp
-*.tmp
 
-tests/
+/testss
