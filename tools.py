@@ -31,13 +31,18 @@ logging.basicConfig(
 )
 
 
-load_dotenv()
-
-client_id = os.getenv('USER_POLE_EMPLOI')
-api_key = os.getenv('API_KEY_POLE_EMPLOI')
-
-
-def create_cols_to_keep(site: str):
+def create_cols_to_keep(
+        site: str
+    ) -> list:
+    '''
+    Créer la liste des colonnes à garder et/ou à drop pour le
+    dataframe final.
+    ---
+    Paramètres:
+    ---
+    site: str: Nom du site pour lequel générer la liste (wttj,
+    pole emploi ou linkedin)
+    '''
     if site == "wttj":
         cols_to_keep = [
         "published_at",                 # date_publication
@@ -95,13 +100,36 @@ def create_cols_to_keep(site: str):
 
 
 def clean_html(text):
+    '''
+    Clean le html dans la description de certaines offres d'emplois.
+    ---
+    Paramètres
+    ---
+    text: texte dans lequel clean le html.
+    '''
     soup = BeautifulSoup(text, 'html.parser')
     cleaned_text = soup.get_text(separator=" ")
     cleaned_text = cleaned_text.replace("\xa0", " ").replace("\n", "")
     return cleaned_text
 
 
-async def fetch(session, url):
+async def fetch(
+        session,
+        url
+    ):
+    '''
+    Requête API pour récupérer les infos d'une offre d'emploi
+    Welcome To The Jungle.
+    ---
+    Paramètres:
+    ---
+    session: aiohttp session.
+    url: url de l'api contenant les infos d'une offre d'emploi.
+    ---
+    Retourne:
+    ---
+    fichier json contenant les informations d'une offre d'emploi.
+    '''
     while True:
         try:
             async with session.get(url) as response:
@@ -114,7 +142,26 @@ async def fetch(session, url):
             await asyncio.sleep(30)
 
 
-async def fetch_all(api_links, cols_to_keep):
+async def fetch_all(
+        api_links:list,
+        cols_to_keep:list
+    ) -> pd.DataFrame:
+    '''
+    Lance toutes les requêtes API pour Welcome To The jungle et créée
+    un dataframe contenant toutes
+    les informations pour chaque offre et nettoie les données.
+    ---
+    Paramètres:
+    ---
+    api_links: list: liste de tout les liens API des offres d'emploi
+    récoltées.
+    cols_to_keep: list: liste des noms de colonnes à garder dans le
+    dataframe final.
+    ---
+    Retourne:
+    ---
+    df: pd.DataFrame : dataframe avec les colonnes nettoyées.
+    '''
     logging.info("API requests...")
     async with aiohttp.ClientSession() as session:
         tasks = [fetch(session, link) for link in api_links]
@@ -143,7 +190,21 @@ async def fetch_all(api_links, cols_to_keep):
 
 def job_offers_wttj(
         job_title: str = "data analyst"
-):
+    ) -> pd.DataFrame:
+    '''
+    Scrapping de toutes les offres d'emploi du site Welcome To The Jungle
+    pour le job indiqué.
+    ---
+    Paramètres:
+    ---
+    job_title: str: Nom de l'intitulé du job pour lequel rechercher les
+    offres.
+    ---
+    Retourne:
+    ---
+    df: pd.DataFrame: dataframe contenant les informations de chaque offres
+    d'emploi trouvée.
+    '''
     cols_to_keep = create_cols_to_keep('wttj')
     # Instanciation de la liste contenant les liens pour les requêtes APIs.
     api_links = []
@@ -193,7 +254,22 @@ def job_offers_wttj(
     return df
 
 
-def clean_dict_columns(df: pd.DataFrame):
+def clean_dict_columns(
+        df: pd.DataFrame
+    ) -> pd.DataFrame:
+    '''
+    Extrait les informations des colonnes contenus dans un dictionnaire
+    sur plusieurs colonnes
+    ---
+    Paramètres:
+    ---
+    df: pd.DataFrame: Le dataframe dans lequel extraire les dictionnaires.
+    ---
+    Retourne:
+    ---
+    df_final: pd.DataFrame: dataframe avec les dictionnaires séparés en
+    plusieurs colonnes.
+    '''
     df['dateActualisation'] = pd.to_datetime(df['dateActualisation'])
     df['dateCreation'] = pd.to_datetime(df['dateCreation'])
     df_lieu_travail = pd.json_normalize(df["lieuTravail"])
@@ -211,7 +287,26 @@ def clean_dict_columns(df: pd.DataFrame):
     return df_final
 
 
-def job_offers_pole_emploi(params):
+def job_offers_pole_emploi(
+        params : dict
+    ) -> pd.DataFrame:
+    '''
+    Scrapping pour les offres d'emploi pour l'intitulé du job demandé
+    en utilisant l'API de pole emploi.
+    ---
+    Paramètres:
+    ---
+    params: dict: Dictionnaire contenant les différents paramètres pour
+    les requêtes APIs.
+    ---
+    Retourne:
+    ---
+    df_final: pd.DataFrame: dataframe contenant les informations pour
+    toutes les offres d'emplois demandées.
+    '''
+    load_dotenv()
+    client_id = os.getenv('USER_POLE_EMPLOI')
+    api_key = os.getenv('API_KEY_POLE_EMPLOI')
     # Initialisation des variables locales
     cols_to_drop = create_cols_to_keep('pole emploi')
     results = []
@@ -259,7 +354,15 @@ def job_offers_pole_emploi(params):
         print(f"Une erreur s'est produite lors de la recherche : {e}")
 
 
-def reorder_cols():
+def reorder_cols() -> list:
+    '''
+    Créer la liste pour l'ordre dans lequel afficher les colonnes
+    du dataframe.
+    ---
+    Retourne:
+    ---
+    liste_cols: list: Liste contenant les colonnes dans l'ordre défini.
+    '''
     liste_cols = [
         "date_publication",
         "contrat",
@@ -278,7 +381,10 @@ def reorder_cols():
     return liste_cols
 
 
-def clean_experience(text):
+def clean_experience(text) -> str:
+    '''
+    Nettoie la colonne "niveau_etudes".
+    '''
     text = text.lower().strip()
     if "bac+5" in text or "bac_5" in text:
         return "Bac +5"
@@ -295,7 +401,19 @@ def clean_experience(text):
 def rename_and_reorder_cols(
         source: str,
         df: pd.DataFrame
-    ):
+    ) -> pd.DataFrame:
+    '''
+    Renomme les noms de colonnes du dataframe.
+    ---
+    Paramètres:
+    ---
+    source: str: Nom du site d'où proviennent les offres.
+    df: pd.DataFrame: dataframe dans lequel renommer les colonnes
+    ---
+    Retourne
+    ---
+    df: pd.DataFrame: Retourne le dataframe avec les colonnes renommées.
+    '''
     if source == "wttj":
         df.rename(
         {
@@ -340,6 +458,15 @@ def create_sql_table(
         df: pd.DataFrame,
         job_title: str = 'data analyst'
     ):
+    '''
+    Créer ou remplace les tables dans la Base de Données SQL.
+    ---
+    Paramètres
+    ---
+    source: str: Site d'où proviennent les offres.
+    df: pd.DataFrame: Dataframe à partir du quel créer la table.
+    job_title: Intitulé du poste auquel les offres correspondent.
+    '''
     logging.info("Creating SQL Database...")
     engine = sqlalchemy.create_engine('sqlite:///database/job_offers.db')
     if source == "pole emploi":
@@ -352,7 +479,16 @@ def create_sql_table(
         logging.info('Source not found.')
 
 
-def scrapping(job_title):
+def scrapping(job_title: str):
+    '''
+    Fonction principale pour récupérer les infos et créer les bases de
+    données.
+    ---
+    Paramètres:
+    ---
+    job_title: str: Intitulé du poste pour lequel rechercher les offres
+    d'emplois sur les différents sites.
+    '''
     # WTTJ
     df_wttj = job_offers_wttj(job_title)
     df_wttj.to_parquet(f'datasets/WTTJ_{job_title}.parquet', index=False)
