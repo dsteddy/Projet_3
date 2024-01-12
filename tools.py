@@ -4,6 +4,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 
+from dotenv import load_dotenv
+import os
+
 import sqlalchemy
 
 from offres_emploi import Api
@@ -27,6 +30,12 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt="%Y-%m-%d %H:%M:%S",
 )
+
+
+load_dotenv()
+
+client_id = os.getenv('USER_POLE_EMPLOI')
+api_key = os.getenv('API_KEY_POLE_EMPLOI')
 
 
 def create_cols_to_keep(site: str):
@@ -123,7 +132,7 @@ async def fetch_all(api_links, cols_to_keep):
     df["niveau_etudes"] = df["niveau_etudes"].astype(str)
     df["niveau_etudes"] = df["niveau_etudes"].apply(clean_experience)
     df["contrat"] = df["contrat"].str.replace(
-        "full_time", "cdi"
+        "full_time", "CDI"
         ).str.replace("internship", "Stage"
         ).str.replace("apprenticeship", "Alternance"
         ).str.replace("temporary", "CDD"
@@ -209,8 +218,8 @@ def job_offers_pole_emploi(params):
     results = []
     start_range = 0
     max_results = float('inf')
-    api_client = Api(client_id="PAR_datajobs_addbc0bc41d7d51f05b218a78c5a95e14be4d73d536fde31c5962de09420f7ba",
-             client_secret="ec561083589b4912fb4feebf33ef1078098c0b8b3f8ff04a665d3e46173f11e1")
+    api_client = Api(client_id=client_id,
+             client_secret=api_key)
     logging.info("Requesting Pole Emploi API...")
     try:
         # Pagination pour récupérer tous les résultats

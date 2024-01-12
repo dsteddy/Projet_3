@@ -86,3 +86,25 @@ JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/ass
 r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js:2:159796
 
 Dynamically enable window occlusion 1
+1705068412027	geckodriver	INFO	Listening on 127.0.0.1:63359
+1705068415096	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "63360" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileWbKVkC"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1705068415303	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1705068415348	Marionette	INFO	Listening on port 63368
+WebDriver BiDi listening on ws://127.0.0.1:63360
+Read port: 63368
+1705068415472	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+DevTools listening on ws://127.0.0.1:63360/devtools/browser/2ed3f784-ddfe-4d9d-9ab6-bd6caa567436
+1705068445442	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+console.log: "RemoteSettingsWorker error: DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements."
+console.error: (new RemoteSettingsWorkerError("DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements.", "resource://services-settings/RemoteSettingsWorker.sys.mjs", 34))
+1705068462243	Marionette	INFO	Stopped listening on port 63368
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js:2:159796
+
+Dynamically enable window occlusion 1
