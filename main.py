@@ -40,6 +40,6 @@ logging.info("CSV file created!")
 # Création de la BDD SQL
 logging.info("Creating SQL Database...")
 engine = sqlalchemy.create_engine('sqlite:///database/job_offers.db')
-df_pole_emploi.to_sql('pole_emploi', con=engine, index=False, if_exists='replace')
-df_wttj.to_sql('wttj', con=engine, index=False, if_exists='replace')
+df_pole_emploi.to_sql(f'pole_emploi_{job_title}', con=engine, index=False, if_exists='replace')
+df_wttj.to_sql(f'wttj_{job_title}', con=engine, index=False, if_exists='replace')
 logging.info("Tables created!")
