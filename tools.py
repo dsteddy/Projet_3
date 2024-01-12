@@ -21,7 +21,6 @@ import aiohttp
 from bs4 import BeautifulSoup
 
 from tqdm import tqdm
-import time
 
 import logging
 
@@ -357,6 +356,7 @@ def scrapping(job_title):
     # WTTJ
     df_wttj = job_offers_wttj(job_title)
     df_wttj.to_parquet(f'datasets/WTTJ_{job_title}.parquet', index=False)
+    df_wttj.to_csv(f'datasets/WTTJ_{job_title}.csv', index=False)
     create_sql_table("wttj", df_wttj, job_title)
     # Pole Emploi
     params = {
@@ -364,4 +364,6 @@ def scrapping(job_title):
     }
     df_pole_emploi = job_offers_pole_emploi(params)
     df_pole_emploi.to_parquet(f'datasets/pole_emploi_{job_title}.parquet', index=False)
+    df_pole_emploi.to_csv(f'datasets/pole_emploi_{job_title}.csv', index=False)
     create_sql_table("pole emploi", df_pole_emploi, job_title)
+
