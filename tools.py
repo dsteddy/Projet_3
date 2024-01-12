@@ -4,6 +4,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 
+import sqlalchemy
+
 from offres_emploi import Api
 
 import re
@@ -26,6 +28,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
+
 def create_cols_to_keep(site: str):
     if site == "wttj":
         cols_to_keep = [
@@ -33,12 +36,8 @@ def create_cols_to_keep(site: str):
         "updated_at",                   # date_modif
         "name",                         # intitule
         "salary_period",                # salaire
-        # "experience_level",
-        # "apply_url",
-        # "contract_duration_min",
         "office.city",                  # ville
         "office.zip_code",              # code postal
-        # "profession.category.fr",
         "education_level",              # niveau_etudes
         "description",                  # description
         "organization.name",            # entreprise
@@ -63,8 +62,6 @@ def create_cols_to_keep(site: str):
                 "typeContratLibelle",
                 "experienceExige",
                 "experienceLibelle",
-                # "dureeTravailLibelle",
-                # "dureeTravailLibelleConverti",
                 "formations",
                 "langues",
                 "salaire",
@@ -122,23 +119,7 @@ async def fetch_all(api_links, cols_to_keep):
     logging.info("DataFrame done!")
     df["description"] = df["description"].apply(clean_html)
     df["organization.description"] = df["organization.description"].apply(clean_html)
-    df.rename(
-    {
-        'education_level' : 'niveau_etudes',
-        'contract_type' : 'contrat',
-        'name' : 'intitule',
-        'published_at' : 'date_publication',
-        'updated_at' : 'date_modif',
-        'experience_level' : 'experience',
-        'office.city' : 'ville',
-        'office.zip_code' : 'code_postal',
-        "organization.name" : "entreprise",
-        'organization.description' : 'description_entreprise',
-        'organization.industry' : 'secteur_activite'
-        }, axis = 1, inplace = True
-    )
-    liste_cols = create_liste_cols()
-    df = df[liste_cols]
+    df = rename_and_reorder_cols("wttj", df)
     df["niveau_etudes"] = df["niveau_etudes"].astype(str)
     df["niveau_etudes"] = df["niveau_etudes"].apply(clean_experience)
     df["contrat"] = df["contrat"].str.replace(
@@ -155,6 +136,7 @@ async def fetch_all(api_links, cols_to_keep):
 def job_offers_wttj(
         job_title: str = "data analyst"
 ):
+    cols_to_keep = create_cols_to_keep('wttj')
     # Instanciation de la liste contenant les liens pour les requêtes APIs.
     api_links = []
     # Lien de l'API de Welcome To The Jungle pour récupérer les données.
@@ -199,7 +181,8 @@ def job_offers_wttj(
         driver.quit()
         # Pour chaque lien de la liste, fait une requête API et stocke les informations dans un dataframe.
     logging.info("Scrapping done!")
-    return api_links
+    df = asyncio.run(fetch_all(api_links, cols_to_keep))
+    return df
 
 
 def clean_dict_columns(df: pd.DataFrame):
@@ -220,8 +203,9 @@ def clean_dict_columns(df: pd.DataFrame):
     return df_final
 
 
-def job_offers_pole_emploi(params, cols_to_drop):
+def job_offers_pole_emploi(params):
     # Initialisation des variables locales
+    cols_to_drop = create_cols_to_keep('pole emploi')
     results = []
     start_range = 0
     max_results = float('inf')
@@ -249,23 +233,8 @@ def job_offers_pole_emploi(params, cols_to_drop):
             df_emploi = pd.DataFrame(results)
             df_final = clean_dict_columns(df_emploi)
             df_final.drop(cols_to_drop, axis=1, inplace=True)
-            df_final.rename(
-                {
-                    'dateCreation' : 'date_publication',
-                    'dateActualisation' : 'date_modif',
-                    'typeContrat' : 'contrat',
-                    "dureeTravailLibelle" : "duree_travail",
-                    "dureeTravailLibelleConverti" : "type_contrat",
-                    'secteurActiviteLibelle' : 'secteur_activite',
-                    'niveauLibelle' : 'niveau_etudes',
-                    'libelle' : 'salaire',
-                    'nom' : 'entreprise',
-                    # 'codePostal' : 'code_postal'
-                }, axis = 1, inplace = True
-            )
+            df_final = rename_and_reorder_cols("pole emploi", df_final)
             logging.info("Dataframe Created!")
-            liste_cols = create_liste_cols()
-            df_final = df_final[liste_cols]
             df_final["description"] = df_final["description"].apply(clean_html)
             # df_final["code_postal"] = df_final["code_postal"].astype(str)
             df_final["niveau_etudes"] = df_final["niveau_etudes"].astype(str)
@@ -282,7 +251,7 @@ def job_offers_pole_emploi(params, cols_to_drop):
         print(f"Une erreur s'est produite lors de la recherche : {e}")
 
 
-def create_liste_cols():
+def reorder_cols():
     liste_cols = [
         "date_publication",
         "contrat",
@@ -313,3 +282,77 @@ def clean_experience(text):
         return "Bac +2"
     else:
         return None
+
+
+def rename_and_reorder_cols(
+        source: str,
+        df: pd.DataFrame
+    ):
+    if source == "wttj":
+        df.rename(
+        {
+            'education_level' : 'niveau_etudes',
+            'contract_type' : 'contrat',
+            'name' : 'intitule',
+            'published_at' : 'date_publication',
+            'updated_at' : 'date_modif',
+            'experience_level' : 'experience',
+            'office.city' : 'ville',
+            'office.zip_code' : 'code_postal',
+            "organization.name" : "entreprise",
+            'organization.description' : 'description_entreprise',
+            'organization.industry' : 'secteur_activite'
+            }, axis = 1, inplace = True
+        )
+        liste_cols = reorder_cols()
+        df = df[liste_cols]
+        return df
+    elif source == "pole emploi":
+        df.rename(
+                {
+                    'dateCreation' : 'date_publication',
+                    'dateActualisation' : 'date_modif',
+                    'typeContrat' : 'contrat',
+                    "dureeTravailLibelle" : "duree_travail",
+                    "dureeTravailLibelleConverti" : "type_contrat",
+                    'secteurActiviteLibelle' : 'secteur_activite',
+                    'niveauLibelle' : 'niveau_etudes',
+                    'libelle' : 'salaire',
+                    'nom' : 'entreprise',
+                    # 'codePostal' : 'code_postal'
+                }, axis = 1, inplace = True
+            )
+        liste_cols = reorder_cols()
+        df = df[liste_cols]
+        return df
+
+
+def create_sql_table(
+        source: str,
+        df: pd.DataFrame,
+        job_title: str = 'data analyst'
+    ):
+    logging.info("Creating SQL Database...")
+    engine = sqlalchemy.create_engine('sqlite:///database/job_offers.db')
+    if source == "pole emploi":
+        df.to_sql(f'pole_emploi_{job_title}', con=engine, index=False, if_exists='replace')
+        logging.info(f"Table {source} for {job_title} created!")
+    elif source == "wttj":
+        df.to_sql(f'wttj_{job_title}', con=engine, index=False, if_exists='replace')
+        logging.info(f"Table {source} for {job_title} created!")
+    else:
+        logging.info('Source not found.')
+
+
+def scrapping(job_title):
+    # WTTJ
+    df_wttj = job_offers_wttj(job_title)
+    df_wttj.to_parquet(f'datasets/WTTJ_{job_title}.parquet', index=False)
+    create_sql_table("wttj", df_wttj, job_title)
+    # Pole Emploi
+    params = {
+    "motsCles": job_title,
+    }
+    df_pole_emploi = job_offers_pole_emploi(params)
+    df_pole_emploi.to_parquet(f'datasets/pole_emploi_{job_title}.parquet', index=False)
+    create_sql_table("pole emploi", df_pole_emploi, job_title)
