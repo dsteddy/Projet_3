@@ -1,6 +1,6 @@
 import asyncio
 import sqlalchemy
-from scrapping import (
+from tools import (
     create_cols_to_keep,
     fetch_all,
     job_offers_wttj,
