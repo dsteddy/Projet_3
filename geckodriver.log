@@ -1,132 +1,65 @@
-1704988742495	geckodriver	INFO	Listening on 127.0.0.1:56837
-1704988745556	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "56838" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofilexIJR4x"
+1705326211865	geckodriver	INFO	Listening on 127.0.0.1:58333
+1705326214946	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "58334" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileq7armP"
 *** You are running in headless mode.
 console.warn: services.settings: Ignoring preference override of remote settings server
 console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
-1704988745780	Marionette	INFO	Marionette enabled
+1705326215668	Marionette	INFO	Marionette enabled
 Dynamically enable window occlusion 0
-1704988745826	Marionette	INFO	Listening on port 56845
-WebDriver BiDi listening on ws://127.0.0.1:56838
-Read port: 56845
-1704988745953	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1705326215785	Marionette	INFO	Listening on port 58342
+WebDriver BiDi listening on ws://127.0.0.1:58334
+Read port: 58342
+1705326216215	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
 [GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
 console.error: ({})
-DevTools listening on ws://127.0.0.1:56838/devtools/browser/3565dbd9-0c94-41aa-ba9b-30f0a53e1955
-1704988775859	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+DevTools listening on ws://127.0.0.1:58334/devtools/browser/e08acbd5-04ed-46e2-9435-115550667f99
+1705326245752	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
 console.log: "RemoteSettingsWorker error: DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements."
 console.error: (new RemoteSettingsWorkerError("DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements.", "resource://services-settings/RemoteSettingsWorker.sys.mjs", 34))
-1704988794768	Marionette	INFO	Stopped listening on port 56845
-JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js, line 2: Script terminated by timeout at:
-r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js:2:159796
+1705326260863	Marionette	INFO	Stopped listening on port 58342
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-31f27def.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-31f27def.js:2:159796
 
 Dynamically enable window occlusion 1
-1705058145643	geckodriver	INFO	Listening on 127.0.0.1:60516
-1705058148690	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "60517" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileOou4nr"
+1705326373431	geckodriver	INFO	Listening on 127.0.0.1:58602
+1705326376510	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "58603" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofile4KmRIZ"
 *** You are running in headless mode.
 console.warn: services.settings: Ignoring preference override of remote settings server
 console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
-1705058149253	Marionette	INFO	Marionette enabled
+1705326376727	Marionette	INFO	Marionette enabled
 Dynamically enable window occlusion 0
-1705058149330	Marionette	INFO	Listening on port 60535
-WebDriver BiDi listening on ws://127.0.0.1:60517
-Read port: 60535
-1705058149565	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1705326376772	Marionette	INFO	Listening on port 58610
+WebDriver BiDi listening on ws://127.0.0.1:58603
+Read port: 58610
+1705326376919	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
 [GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
 console.error: ({})
-DevTools listening on ws://127.0.0.1:60517/devtools/browser/deee538d-c89d-4824-9618-ccf2293af369
-1705058179272	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+DevTools listening on ws://127.0.0.1:58603/devtools/browser/a80d4c7e-39eb-47ab-b368-47c985c5a363
+1705326406779	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
 console.log: "RemoteSettingsWorker error: DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements."
 console.error: (new RemoteSettingsWorkerError("DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements.", "resource://services-settings/RemoteSettingsWorker.sys.mjs", 34))
-1705058200253	Marionette	INFO	Stopped listening on port 60535
-JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js, line 2: Script terminated by timeout at:
-r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js:2:159796
+1705326436570	Marionette	INFO	Stopped listening on port 58610
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-31f27def.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-31f27def.js:2:159796
 
 Dynamically enable window occlusion 1
-1705066821277	geckodriver	INFO	Listening on 127.0.0.1:62507
-1705066824361	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "62508" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofile4axS20"
+*** UTM:SVC TimerManager:registerTimer called after profile-before-change notification. Ignoring timer registration for id: telemetry_modules_ping
+*** UTM:SVC TimerManager:registerTimer called after profile-before-change notification. Ignoring timer registration for id: telemetry_untrustedmodules_ping
+1705326540089	geckodriver	INFO	Listening on 127.0.0.1:58873
+1705326543162	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "58874" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileAZ1CEk"
 *** You are running in headless mode.
 console.warn: services.settings: Ignoring preference override of remote settings server
 console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
-1705066824596	Marionette	INFO	Marionette enabled
+1705326543364	Marionette	INFO	Marionette enabled
 Dynamically enable window occlusion 0
-1705066824639	Marionette	INFO	Listening on port 62516
-WebDriver BiDi listening on ws://127.0.0.1:62508
-Read port: 62516
-1705066824759	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1705326543406	Marionette	INFO	Listening on port 58882
+WebDriver BiDi listening on ws://127.0.0.1:58874
+Read port: 58882
+1705326543522	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
 [GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
 console.error: ({})
-DevTools listening on ws://127.0.0.1:62508/devtools/browser/3a4ddc0f-9bb3-4697-8c80-e08efa20cd68
-1705066854634	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
-console.log: "RemoteSettingsWorker error: DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements."
-console.error: (new RemoteSettingsWorkerError("DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements.", "resource://services-settings/RemoteSettingsWorker.sys.mjs", 34))
-1705066870900	Marionette	INFO	Stopped listening on port 62516
-JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js, line 2: Script terminated by timeout at:
-r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js:2:159796
-
-Dynamically enable window occlusion 1
-1705067000731	geckodriver	INFO	Listening on 127.0.0.1:62738
-1705067003808	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "62739" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileajyQjR"
-*** You are running in headless mode.
-console.warn: services.settings: Ignoring preference override of remote settings server
-console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
-1705067004017	Marionette	INFO	Marionette enabled
-Dynamically enable window occlusion 0
-1705067004060	Marionette	INFO	Listening on port 62749
-WebDriver BiDi listening on ws://127.0.0.1:62739
-Read port: 62749
-1705067004176	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
-[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
-console.error: ({})
-DevTools listening on ws://127.0.0.1:62739/devtools/browser/a821de45-6bce-4eaf-b1f9-263c3b178fac
-1705067034030	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
-console.log: "RemoteSettingsWorker error: DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements."
-console.error: (new RemoteSettingsWorkerError("DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements.", "resource://services-settings/RemoteSettingsWorker.sys.mjs", 34))
-1705067050443	Marionette	INFO	Stopped listening on port 62749
-JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js, line 2: Script terminated by timeout at:
-r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js:2:159796
-
-Dynamically enable window occlusion 1
-1705068412027	geckodriver	INFO	Listening on 127.0.0.1:63359
-1705068415096	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "63360" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileWbKVkC"
-*** You are running in headless mode.
-console.warn: services.settings: Ignoring preference override of remote settings server
-console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
-1705068415303	Marionette	INFO	Marionette enabled
-Dynamically enable window occlusion 0
-1705068415348	Marionette	INFO	Listening on port 63368
-WebDriver BiDi listening on ws://127.0.0.1:63360
-Read port: 63368
-1705068415472	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
-[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
-console.error: ({})
-DevTools listening on ws://127.0.0.1:63360/devtools/browser/2ed3f784-ddfe-4d9d-9ab6-bd6caa567436
-1705068445442	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
-console.log: "RemoteSettingsWorker error: DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements."
-console.error: (new RemoteSettingsWorkerError("DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements.", "resource://services-settings/RemoteSettingsWorker.sys.mjs", 34))
-1705068462243	Marionette	INFO	Stopped listening on port 63368
-JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js, line 2: Script terminated by timeout at:
-r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js:2:159796
-
-Dynamically enable window occlusion 1
-1705069065040	geckodriver	INFO	Listening on 127.0.0.1:63909
-1705069068089	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" "63910" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\royde\\AppData\\Local\\Temp\\rust_mozprofileyo7IUt"
-*** You are running in headless mode.
-console.warn: services.settings: Ignoring preference override of remote settings server
-console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
-1705069068297	Marionette	INFO	Marionette enabled
-Dynamically enable window occlusion 0
-1705069068341	Marionette	INFO	Listening on port 63918
-WebDriver BiDi listening on ws://127.0.0.1:63910
-Read port: 63918
-1705069068458	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
-[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
-console.error: ({})
-DevTools listening on ws://127.0.0.1:63910/devtools/browser/7c53dac4-69a7-475d-b949-d68110423de9
-1705069098312	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
-console.log: "RemoteSettingsWorker error: DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements."
-console.error: (new RemoteSettingsWorkerError("DataError: IndexedDB: records, timestamps execute() Data provided to an operation does not meet requirements.", "resource://services-settings/RemoteSettingsWorker.sys.mjs", 34))
-1705069114670	Marionette	INFO	Stopped listening on port 63918
-JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js, line 2: Script terminated by timeout at:
-r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d42a2e41.js:2:159796
+DevTools listening on ws://127.0.0.1:58874/devtools/browser/62e40e21-aaf2-41c8-9e92-767503f3a540
+1705326564017	Marionette	INFO	Stopped listening on port 58882
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-31f27def.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-31f27def.js:2:159796
 
 Dynamically enable window occlusion 1
