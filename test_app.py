@@ -6,20 +6,10 @@ import plotly.express as px
 import pandas as pd
 
 links = [
-        "datasets/pole_emploi_data analyst.parquet",
-        "datasets/pole_emploi_data engineer.parquet",
-        "datasets/pole_emploi_data scientist.parquet",
-        "datasets/WTTJ_data analyst.parquet",
-        "datasets/WTTJ_data engineer.parquet",
-        "datasets/WTTJ_data scientist.parquet",
+        "datasets/data_analyst.parquet",
 ]
 
-pe_analyst = pd.read_parquet(links[0])
-pe_engineer = pd.read_parquet(links[1])
-pe_scientist = pd.read_parquet(links[2])
-wttj_analyst = pd.read_parquet(links[3])
-wttj_engineer = pd.read_parquet(links[4])
-wttj_scientist = pd.read_parquet(links[5])
+df_analyst = pd.read_parquet(links[0])
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -46,8 +36,8 @@ job_title = dcc.Dropdown(
 
 tableau = dash_table.DataTable(
     id='type_contrat_output',
-    columns=[{'name': col, 'id': col} for col in wttj_analyst.columns],
-    data=wttj_analyst.to_dict('records'),
+    columns=[{'name': col, 'id': col} for col in df_analyst.columns],
+    data=df_analyst.to_dict('records'),
 )
 
 city = dcc.Dropdown(
@@ -113,9 +103,9 @@ app.layout = dbc.Container(
 
 def select_type_contrat(value):
     if not value:
-        return wttj_analyst.to_dict('records')
+        return df_analyst.to_dict('records')
 
-    filtered_df = wttj_analyst[wttj_analyst["contrat"].isin(value)]
+    filtered_df = df_analyst[df_analyst["contrat"].isin(value)]
     return filtered_df.to_dict('records')
 
 if __name__ == '__main__':

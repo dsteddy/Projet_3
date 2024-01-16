@@ -5,12 +5,15 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
+from offres_emploi.utils import dt_to_str_iso
+
 from dotenv import load_dotenv
 import os
 
 import sqlalchemy
 
 from offres_emploi import Api
+import datetime
 
 import re
 
@@ -491,17 +494,28 @@ def scrapping(job_title: str):
     job_title: str: Intitulé du poste pour lequel rechercher les offres
     d'emplois sur les différents sites.
     '''
+    job_title_nom_fichier = job_title.replace(" ", "_")
     # WTTJ
     df_wttj = job_offers_wttj(job_title)
-    df_wttj.to_parquet(f'datasets/WTTJ_{job_title}.parquet', index=False)
-    df_wttj.to_csv(f'datasets/WTTJ_{job_title}.csv', index=False)
-    create_sql_table("wttj", df_wttj, job_title)
+    df_wttj["date_publication"] = pd.to_datetime(df_wttj["date_publication"])
+    df_wttj["date_modif"] = pd.to_datetime(df_wttj["date_modif"])
+    df_wttj["date_publication"] = df_wttj["date_publication"].dt.strftime("%Y-%m-%d")
+    df_wttj["date_modif"] = df_wttj["date_modif"].dt.strftime("%Y-%m-%d")
+    df_wttj.to_parquet(f'datasets/WTTJ_{job_title_nom_fichier}.parquet', index=False)
+    # df_wttj.to_csv(f'datasets/WTTJ_{job_title_nom_fichier}.csv', index=False)
+    # create_sql_table("wttj", df_wttj, job_title_nom_fichier)
     # Pole Emploi
     params = {
-    "motsCles": job_title,
+        "motsCles": "data analyst",
+        'minCreationDate': dt_to_str_iso(datetime.datetime(2023, 9, 1, 12, 30)),
+        'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
     }
     df_pole_emploi = job_offers_pole_emploi(params)
-    df_pole_emploi.to_parquet(f'datasets/pole_emploi_{job_title}.parquet', index=False)
-    df_pole_emploi.to_csv(f'datasets/pole_emploi_{job_title}.csv', index=False)
-    create_sql_table("pole emploi", df_pole_emploi, job_title)
-
+    df_pole_emploi["date_publication"] = df_pole_emploi["date_publication"].dt.strftime("%Y-%m-%d")
+    df_pole_emploi["date_modif"] = df_pole_emploi["date_modif"].dt.strftime("%Y-%m-%d")
+    df_pole_emploi.to_parquet(f'datasets/pole_emploi_{job_title_nom_fichier}.parquet', index=False)
+    # df_pole_emploi.to_csv(f'datasets/pole_emploi_{job_title_nom_fichier}.csv', index=False)
+    # create_sql_table("pole emploi", df_pole_emploi, job_title_nom_fichier)
+    # Concat both
+    df = pd.concat([df_wttj, df_pole_emploi], ignore_index=True)
+    df.to_parquet(f'datasets/{job_title_nom_fichier}.parquet', index=False)
