@@ -9,7 +9,7 @@ logging.basicConfig(
 )
 
 # Choix de l'intitulé du poste
-job_title = "data scientist"
+job_title = "data analyst"
 logging.info(f"Scraping job offers for {job_title}")
 
 scrapping(job_title)
