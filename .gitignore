@@ -5,3 +5,8 @@
 *.log
 
 /tests
+
+
+/__pycache__
+
+/venv

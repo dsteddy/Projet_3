@@ -100,6 +100,11 @@ def scrapping(
         df = pd.concat([wttj_analyst, wttj_engineer, wttj_scientist, pe_analyst, pe_engineer, pe_scientist], ignore_index=True)
         logging.info("Dropping duplicates...")
         df = df.drop_duplicates(subset="description", keep="first")
+        logging.info("Extracting Skills...")
+        df = clean_description(df)
+        df["tech_skills"] = df["description"].apply(extract_tech_skills)
+        df["soft_skills"] = df["description"].apply(extract_soft_skills)
+        df.drop("description_cleaned", axis=1, inplace=True)
         df.to_parquet(f'datasets/all_jobs.parquet', index=False)
         logging.info("Finished!")
     else:
@@ -111,9 +116,8 @@ def scrapping(
         df_wttj = clean_description(df_wttj)
         df_wttj["tech_skills"] = df_wttj["description"].apply(extract_tech_skills)
         df_wttj["soft_skills"] = df_wttj["description"].apply(extract_soft_skills)
+        df_wttj.drop("description_cleaned", axis=1, inplace=True)
         df_wttj.to_parquet(f'datasets/WTTJ_{job_title_nom_fichier}.parquet', index=False)
-        # df_wttj.to_csv(f'datasets/WTTJ_{job_title_nom_fichier}.csv', index=False)
-        # create_sql_table("wttj", df_wttj, job_title_nom_fichier)
 
         # Pole Emploi
         params = {
@@ -126,12 +130,8 @@ def scrapping(
         df_pole_emploi = clean_description(df_pole_emploi)
         df_pole_emploi["tech_skills"] = df_pole_emploi["description"].apply(extract_tech_skills)
         df_pole_emploi["soft_skills"] = df_pole_emploi["description"].apply(extract_soft_skills)
-        # df_pole_emploi["date_publication"] = pd.to_datetime(df_pole_emploi["date_publication"])
-        # df_pole_emploi["date_publication"] = df_pole_emploi["date_publication"].dt.strftime("%Y-%m-%d")
-        # df_pole_emploi["date_modif"] = df_pole_emploi["date_modif"].dt.strftime("%Y-%m-%d")
+        df_pole_emploi.drop("description_cleaned", axis=1, inplace=True)
         df_pole_emploi.to_parquet(f'datasets/pole_emploi_{job_title_nom_fichier}.parquet', index=False)
-        # df_pole_emploi.to_csv(f'datasets/pole_emploi_{job_title_nom_fichier}.csv', index=False)
-        # create_sql_table("pole emploi", df_pole_emploi, job_title_nom_fichier)
 
         # Concat both
         df = pd.concat([df_wttj, df_pole_emploi], ignore_index=True)
