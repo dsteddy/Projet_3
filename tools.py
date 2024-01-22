@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 
+import nltk
 from nltk.corpus import stopwords
 
 from offres_emploi.utils import dt_to_str_iso
@@ -432,6 +433,38 @@ def clean_date(
     df["date_publication"] = df["date_publication"].dt.strftime("%Y-%m-%d")
     return df
 
+def clean_salaire(text):
+    if text is not None:
+        if "Annuel" in text:
+            matches = re.findall(r'\d+,\d+', text)
+            if matches:
+                salaries = [float(match.replace(',', '.')) for match in matches]
+                average_salary = sum(salaries) / len(salaries)
+                if "13 mois" in text:
+                    months = "13 mois"
+                else:
+                    months = "12 mois"
+                return f'{average_salary} sur {months}.'
+        elif "Mensuel" in text:
+            matches = re.findall(r'\d+,\d+', text)
+            if matches:
+                monthly_salaries = [float(match.replace(',', '.')) for match in matches]
+                average_salary = sum(monthly_salaries) / len(monthly_salaries)
+                average_annual_salary = average_salary * 12
+                if "13 mois" in text:
+                    months = "13 mois"
+                else:
+                    months = "12 mois"
+                return f'{average_annual_salary} sur {months}.'
+        elif "Horaire" in text:
+            matches = re.findall(r'\d+,\d+', text)
+            if matches:
+                hourly_salaries = [float(match.replace(',', '.')) for match in matches]
+                average_salary = sum(hourly_salaries) / len(hourly_salaries)
+                average_annual_salary = average_salary * 35 * 52
+                return f'{average_annual_salary} sur 12 mois.'
+    return None
+
 
 # Reordering/renaming
 def create_cols_to_keep(
@@ -683,6 +716,8 @@ def soft_skills_list():
     return soft_skills
 
 def clean_description(df):
+    if not nltk.download_info().get("corpora/stopwords"):
+        nltk.download("stopwords")
     stop = stopwords.words("french")
     df["description_cleaned"] = df["description"].apply(
         lambda x: " "
