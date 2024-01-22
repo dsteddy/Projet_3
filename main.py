@@ -15,5 +15,5 @@ logging.info(f"Scraping job offers for {job_title}")
 
 scrapping(
     job_title,
-    page=1
+    # page=1
 )

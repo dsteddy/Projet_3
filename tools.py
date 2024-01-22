@@ -108,6 +108,9 @@ def scrapping(
         # WTTJ
         df_wttj = job_offers_wttj(job_title, page)
         df_wttj = clean_date(df_wttj)
+        df_wttj = clean_description(df_wttj)
+        df_wttj["tech_skills"] = df_wttj["description"].apply(extract_tech_skills)
+        df_wttj["soft_skills"] = df_wttj["description"].apply(extract_soft_skills)
         df_wttj.to_parquet(f'datasets/WTTJ_{job_title_nom_fichier}.parquet', index=False)
         # df_wttj.to_csv(f'datasets/WTTJ_{job_title_nom_fichier}.csv', index=False)
         # create_sql_table("wttj", df_wttj, job_title_nom_fichier)
@@ -120,6 +123,9 @@ def scrapping(
         }
         df_pole_emploi = job_offers_pole_emploi(params)
         df_pole_emploi = clean_date(df_pole_emploi)
+        df_pole_emploi = clean_description(df_pole_emploi)
+        df_pole_emploi["tech_skills"] = df_pole_emploi["description"].apply(extract_tech_skills)
+        df_pole_emploi["soft_skills"] = df_pole_emploi["description"].apply(extract_soft_skills)
         # df_pole_emploi["date_publication"] = pd.to_datetime(df_pole_emploi["date_publication"])
         # df_pole_emploi["date_publication"] = df_pole_emploi["date_publication"].dt.strftime("%Y-%m-%d")
         # df_pole_emploi["date_modif"] = df_pole_emploi["date_modif"].dt.strftime("%Y-%m-%d")
@@ -687,15 +693,19 @@ def clean_description(df):
     return df
 
 def extract_tech_skills(description):
+    # description_cleaned = clean_description(description)
     skills = set(description.lower().split())
     technical_skills = tech_skills_list()
     extracted_skills = list(skills.intersection(technical_skills))
+    extracted_skills = regroup_tech_skills(extracted_skills)
     return extracted_skills
 
 def extract_soft_skills(description):
+    # description_cleaned = clean_description(description)
     skills = set(description.lower().split())
     soft_skills = soft_skills_list()
     extracted_skills = list(skills.intersection(soft_skills))
+    extracted_skills = regroup_soft_skills(extracted_skills)
     return extracted_skills
 
 def regroup_tech_skills(tech_skills):
