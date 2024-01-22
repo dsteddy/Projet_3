@@ -1,0 +1,52 @@
+/* style.css dans le dossier 'assets' */
+
+.body-content {
+    /* Ajoutez ici le code hexadécimal de la couleur de fond correspondant à votre logo */
+    background-color: #9A8B75; /* Exemple de couleur */
+    height: 100vh;
+}
+
+body {
+    background-color: #9A8B75; /* Votre couleur de fond */
+}
+
+.header {
+    /* Style pour le bandeau */
+}
+
+.logo-and-title {
+    /* Style pour le logo et le titre */
+}
+
+.navigation .menu-link {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: inline-block;
+    margin-left: 10px;
+    border-radius: 5px;
+    transition: color 0.3s;
+}
+
+.navigation .menu-link:hover {
+    color: red;
+}
+
+/* Style pour les onglets */
+.tab {
+    background-color: black;
+    color: black;
+    border: #9A8B75;
+}
+
+.tab:hover {
+    background-color: black;
+    color: red;
+}
+
+/* Active tab style */
+.active-tab {
+    background-color: black;
+    color: white;
+}
