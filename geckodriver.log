@@ -1137,3 +1137,80 @@ JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/ass
 r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-a2fb7933.js:2:159523
 
 Dynamically enable window occlusion 1
+1705939474139	geckodriver	INFO	Listening on 127.0.0.1:64599
+1705939477208	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" ... 0" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\preto\\AppData\\Local\\Temp\\rust_mozprofilevi8G54"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1705939477866	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1705939477946	Marionette	INFO	Listening on port 64614
+WebDriver BiDi listening on ws://127.0.0.1:64600
+Read port: 64614
+1705939478168	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+DevTools listening on ws://127.0.0.1:64600/devtools/browser/bbbebbf6-5481-4165-b9cf-26a1b005c4f0
+1705939507977	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+1705939559511	Marionette	INFO	Stopped listening on port 64614
+Dynamically enable window occlusion 1
+1705940565820	geckodriver	INFO	Listening on 127.0.0.1:49599
+1705940568846	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" ... 0" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\preto\\AppData\\Local\\Temp\\rust_mozprofileKUtNQ4"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1705940569377	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1705940569434	Marionette	INFO	Listening on port 49611
+WebDriver BiDi listening on ws://127.0.0.1:49600
+Read port: 49611
+1705940569579	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+DevTools listening on ws://127.0.0.1:49600/devtools/browser/ba224046-ac3a-46eb-8cf1-17da4a55b45a
+1705940599424	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+1705940646869	Marionette	INFO	Stopped listening on port 49611
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d05a96e8.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d05a96e8.js:2:159523
+
+Dynamically enable window occlusion 1
+1705940677876	geckodriver	INFO	Listening on 127.0.0.1:50066
+1705940680936	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" ... 7" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\preto\\AppData\\Local\\Temp\\rust_mozprofilebNMdUF"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1705940681517	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1705940681576	Marionette	INFO	Listening on port 50078
+WebDriver BiDi listening on ws://127.0.0.1:50067
+Read port: 50078
+1705940681720	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+DevTools listening on ws://127.0.0.1:50067/devtools/browser/be9e5997-06f2-4b9b-8641-5e48387aefb3
+1705940711539	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+1705940777384	Marionette	INFO	Stopped listening on port 50078
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d05a96e8.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d05a96e8.js:2:159523
+
+Dynamically enable window occlusion 1
+1705940810986	geckodriver	INFO	Listening on 127.0.0.1:50561
+1705940814042	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "--marionette" "-headless" "--remote-debugging-port" ... 2" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\preto\\AppData\\Local\\Temp\\rust_mozprofilezAyGyp"
+*** You are running in headless mode.
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1705940814595	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1705940814656	Marionette	INFO	Listening on port 50575
+WebDriver BiDi listening on ws://127.0.0.1:50562
+Read port: 50575
+1705940814810	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+DevTools listening on ws://127.0.0.1:50562/devtools/browser/521ff685-de86-4d8c-abdc-906bea6a8fa2
+1705940844914	addons.xpi	ERROR	System addon update list error SyntaxError: XMLHttpRequest.open: 'http://%(server)s/dummy-system-addons.xml' is not a valid URL.
+1705940850504	Marionette	INFO	Stopped listening on port 50575
+JavaScript warning: https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d05a96e8.js, line 2: Script terminated by timeout at:
+r@https://cdn.welcometothejungle.com/wttj-front/production/assets/4213-d05a96e8.js:2:159523
+
+Dynamically enable window occlusion 1

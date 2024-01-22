@@ -7,19 +7,21 @@ from tools import soft_skills_list, tech_skills_list # fichier avec les fonction
 
 app = dash.Dash(__name__)
 
-df = pd.read_parquet('assets\offre.parquet')
+df = pd.read_parquet('datasets\jobs.parquet')
 # Sélectionner les 10 premières lignes
-df_subset = df.head(10)
+df_subset = df.sample(n=100, random_state=42)
 
 # Options de la liste déroulante pour le métier
-job_options = ['data analyst', 'data engineer', 'data scientist']
+job_options = ['Data analyst', 'data engineer', 'Data Scientist', 'Consultant Data']
 
-# Options de la liste déroulante pour les régions
-region_options = [
-    'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire', 'Corse',
-    'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie',
-    'Pays de la Loire', 'Provence-Alpes-Côte d\'Azur'
-]
+# Options de la liste déroulante pour les régions ou ville 
+region_options = df['ville'].unique()
+
+# region_options = [
+#     'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire', 'Corse',
+#     'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie',
+#     'Pays de la Loire', 'Provence-Alpes-Côte d\'Azur'
+# ]
 
 # Options de la liste à choix multiple pour les compétences
 competence_options = soft_skills_list()
@@ -34,7 +36,7 @@ app.layout = html.Div(
     children=[
         # Ajoutez un logo à gauche du titre
         html.Div([
-            html.Img(src='assets/logo.jpg', style={'width': '100px', 'height': '100px', 'borderRadius': '50%'}),
+            html.Img(src='assets/jobarts.png', style={'width': '100px', 'height': '100px', 'borderRadius': '50%'}),
             html.H1("Jobart's", style={'textAlign': 'center', 'fontWeight': 'bold', 'marginLeft': '20px'}),
         ], style={'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center', 'marginBottom': '20px'}),
 

@@ -50,3 +50,28 @@ body {
     background-color: black;
     color: white;
 }
+
+/* pour faire les cellules rectangles avec bord arrondis  */
+.header-row {
+    display: flex;
+    background-color: #f0f0f0; /* Couleur de fond pour les lignes d'en-tête */
+    border-radius: 10px; /* Bord arrondi */
+    margin-bottom: 5px; /* Marge entre les lignes */
+}
+
+.header-cell, .cell {
+    flex: 1;
+    padding: 10px;
+}
+
+.data-row {
+    display: flex;
+    border-radius: 10px; /* Bord arrondi */
+    margin-bottom: 5px; /* Marge entre les lignes */
+}
+
+.cell {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd; /* Bordure pour les cellules de données */
+}
