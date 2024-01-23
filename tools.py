@@ -128,6 +128,7 @@ def scrapping(job_title: str, page : int = None):
         # WTTJ
         df_wttj = job_offers_wttj(job_title, page)
         df_wttj = clean_date(df_wttj)
+        df_wttj[df_wttj["description"].isna()] = "Aucune info"
         df_wttj = clean_description(df_wttj)
         df_wttj["tech_skills"] = df_wttj["description"].apply(extract_tech_skills)
         df_wttj["soft_skills"] = df_wttj["description"].apply(extract_soft_skills)
@@ -146,6 +147,7 @@ def scrapping(job_title: str, page : int = None):
         }
         df_pole_emploi = job_offers_pole_emploi(params)
         df_pole_emploi = clean_date(df_pole_emploi)
+        df_pole_emploi[df_pole_emploi["description"].isna()] = "Aucune info"
         df_pole_emploi = clean_description(df_pole_emploi)
         df_pole_emploi["tech_skills"] = df_pole_emploi["description"].apply(extract_tech_skills)
         df_pole_emploi["soft_skills"] = df_pole_emploi["description"].apply(extract_soft_skills)
