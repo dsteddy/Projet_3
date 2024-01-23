@@ -54,20 +54,24 @@ body {
 /* pour faire les cellules rectangles avec bord arrondis  */
 .header-row {
     display: flex;
-    background-color: #f0f0f0; /* Couleur de fond pour les lignes d'en-tête */
+    background-color: #808080;  /* Fond gris pour les en-têtes */
+    color: #010001b5;  /* Couleur texte */
+    border-bottom: 2px solid #000000;
     border-radius: 10px; /* Bord arrondi */
-    margin-bottom: 5px; /* Marge entre les lignes */
+    margin-bottom: 20px; /* Marge entre les lignes */
 }
 
 .header-cell, .cell {
     flex: 1;
     padding: 10px;
+    border: 1px solid #010101; /* Bordure pour les titres */
 }
 
 .data-row {
     display: flex;
+    background-color: #ffffff; /* Fond blanc pour les lignes de données */
     border-radius: 10px; /* Bord arrondi */
-    margin-bottom: 5px; /* Marge entre les lignes */
+    margin-bottom: 20px; /* Marge entre les lignes */
 }
 
 .cell {

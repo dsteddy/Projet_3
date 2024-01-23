@@ -115,6 +115,18 @@ app.layout = html.Div(
                             placeholder='Sélectionnez un ou plusieurs type de contrat'
                         ),
                     ], style={'display': 'inline-block', 'width': '30%', 'marginTop': '10px'}),
+                    
+                  # Sélecteur de temps (date)
+                    html.Div([
+                        html.H4("Date de Publication"),
+                        dcc.DatePickerRange(
+                            id='date-picker-range',
+                            start_date=df_subset['date_publication'].min(),  # Date de début basée sur la valeur minimale dans le DataFrame
+                            end_date=df_subset['date_publication'].max(),  # Date de fin basée sur la valeur maximale dans le DataFrame
+                            display_format='DD/MM/YYYY',  # Format d'affichage de la date
+                            style={'fontSize': 14, 'display': 'inline-block', 'width': '70%'},  # Ajustements de style pour la taille du texte
+                        ),
+                    ], style={'display': 'inline-block', 'width': '30%', 'marginTop': '10px'}),
                 ]),
                 
                 # Espace avant les onglets
