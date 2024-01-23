@@ -256,17 +256,21 @@ async def fetch_all(
         tasks = [fetch(session, link) for link in api_links]
         responses = await asyncio.gather(*tasks)
     logging.info("API requests done!")
+
     logging.info("Concatening dataframes...")
     full_df = pd.concat([pd.json_normalize(resp["job"]) for resp in responses if "job" in resp], ignore_index=True)
+
     cols_to_drop = [col for col in full_df.columns if col not in cols_to_keep]
+
     df_urls = pd.json_normalize(full_df["urls"])
     df_urls["link"] = df_urls[0]
     df_urls = df_urls.drop(columns=[0,1])
     df_urls["link"] = df_urls["link"].apply(clean_link)
-    # full_df.drop("urls", inplace=True, axis=1)
     url_merged = pd.concat([full_df, df_urls], axis=1)
+
     df = url_merged.drop(columns=cols_to_drop)
     logging.info("DataFrame done!")
+
     df["description"] = df["description"].apply(clean_html)
     df["organization.description"] = df["organization.description"].apply(clean_html)
     df[df["salary_period"].isna()] = None
@@ -369,12 +373,13 @@ def job_offers_pole_emploi(
 
         if max_results > 0:
             df_emploi = pd.DataFrame(results)
+
             df_final = clean_dict_columns(df_emploi)
             df_final.drop(cols_to_drop, axis=1, inplace=True)
             df_final = rename_and_reorder_cols("pole emploi", df_final)
             logging.info("Dataframe Created!")
+
             df_final["description"] = df_final["description"].apply(clean_html)
-            # df_final["code_postal"] = df_final["code_postal"].astype(str)
             df_final["niveau_etudes"] = df_final["niveau_etudes"].astype(str)
             df_final["niveau_etudes"] = df_final["niveau_etudes"].apply(clean_experience)
             df_final["ville"] = df_final["ville"].str.title().str.replace(r"\d+", "", regex=True).str.replace("-", "").str.strip()
@@ -534,9 +539,7 @@ def create_cols_to_keep(
     '''
     if site == "wttj":
         cols_to_keep = [
-        # "urls",
         "published_at",                 # date_publication
-        # "updated_at",                   # date_modif
         "name",                         # intitule
         "salary_period",                # salaire
         "office.city",                  # ville
@@ -549,7 +552,7 @@ def create_cols_to_keep(
         "contract_type",                # contract_type
         "salary_min",                   # salaire(2)
         "salary_max",                   # salaire(3)
-        "link",
+        "link",                         # link
     ]
         return cols_to_keep
 
@@ -609,12 +612,10 @@ def rename_and_reorder_cols(
     if source == "wttj":
         df.rename(
         {
-            # 'urls' : 'link',
             'education_level' : 'niveau_etudes',
             'contract_type' : 'contrat',
             'name' : 'intitule',
             'published_at' : 'date_publication',
-            # 'updated_at' : 'date_modif',
             'experience_level' : 'experience',
             'office.city' : 'ville',
             'office.zip_code' : 'code_postal',
@@ -630,7 +631,6 @@ def rename_and_reorder_cols(
         df.rename(
                 {
                     'dateCreation' : 'date_publication',
-                    # 'dateActualisation' : 'date_modif',
                     'urlOrigine' : 'link',
                     'typeContrat' : 'contrat',
                     "dureeTravailLibelle" : "duree_travail",
@@ -639,7 +639,6 @@ def rename_and_reorder_cols(
                     'niveauLibelle' : 'niveau_etudes',
                     'libelle' : 'salaire',
                     'nom' : 'entreprise',
-                    # 'codePostal' : 'code_postal'
                 }, axis = 1, inplace = True
             )
         liste_cols = reorder_cols()
@@ -661,41 +660,30 @@ def reorder_cols(
         liste_cols = [
             "date_publication",
             "contrat",
-            # "type_contrat",
             "intitule",
             "description",
             "secteur_activite",
             "niveau_etudes",
             "salaire",
-            # "salary_period",
-            # "salary_min",                   # salaire(2)
-            # "salary_max",                   # salaire(3)
             "entreprise",
             "description_entreprise",
             "ville",
             "link",
-            # "code_postal",
-            # "date_modif",
         ]
 
     else:
         liste_cols = [
             "date_publication",
             "contrat",
-            # "type_contrat",
             "intitule",
             "description",
             "secteur_activite",
             "niveau_etudes",
             "salaire",
-            # "salary_min",                   # salaire(2)
-            # "salary_max",                   # salaire(3)
             "entreprise",
             "description_entreprise",
             "ville",
             "link",
-            # "code_postal",
-            # "date_modif",
         ]
     return liste_cols
 
@@ -782,7 +770,6 @@ def clean_description(df):
     return df
 
 def extract_tech_skills(description):
-    # description_cleaned = clean_description(description)
     skills = set(description.lower().split())
     technical_skills = tech_skills_list()
     extracted_skills = list(skills.intersection(technical_skills))
@@ -790,7 +777,6 @@ def extract_tech_skills(description):
     return extracted_skills
 
 def extract_soft_skills(description):
-    # description_cleaned = clean_description(description)
     skills = set(description.lower().split())
     soft_skills = soft_skills_list()
     extracted_skills = list(skills.intersection(soft_skills))
