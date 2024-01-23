@@ -827,30 +827,30 @@ def regroup_soft_skills(soft_skills):
 
 
 # SQL
-def create_sql_table(
-        source: str,
-        df: pd.DataFrame,
-        job_title: str = 'data analyst'
-    ):
-    '''
-    Créer ou remplace les tables dans la Base de Données SQL.
-    ---
-    Paramètres
-    ---
-    source: str: Site d'où proviennent les offres.
-    df: pd.DataFrame: Dataframe à partir du quel créer la table.
-    job_title: Intitulé du poste auquel les offres correspondent.
-    '''
-    logging.info("Creating SQL Database...")
-    engine = sqlalchemy.create_engine('sqlite:///database/job_offers.db')
-    if source == "pole emploi":
-        df.to_sql(f'pole_emploi_{job_title}', con=engine, index=False, if_exists='replace')
-        logging.info(f"Table {source} for {job_title} created!")
-    elif source == "wttj":
-        df.to_sql(f'wttj_{job_title}', con=engine, index=False, if_exists='replace')
-        logging.info(f"Table {source} for {job_title} created!")
-    else:
-        logging.info('Source not found.')
+# def create_sql_table(
+#         source: str,
+#         df: pd.DataFrame,
+#         job_title: str = 'data analyst'
+#     ):
+#     '''
+#     Créer ou remplace les tables dans la Base de Données SQL.
+#     ---
+#     Paramètres
+#     ---
+#     source: str: Site d'où proviennent les offres.
+#     df: pd.DataFrame: Dataframe à partir du quel créer la table.
+#     job_title: Intitulé du poste auquel les offres correspondent.
+#     '''
+#     logging.info("Creating SQL Database...")
+#     engine = sqlalchemy.create_engine('sqlite:///database/job_offers.db')
+#     if source == "pole emploi":
+#         df.to_sql(f'pole_emploi_{job_title}', con=engine, index=False, if_exists='replace')
+#         logging.info(f"Table {source} for {job_title} created!")
+#     elif source == "wttj":
+#         df.to_sql(f'wttj_{job_title}', con=engine, index=False, if_exists='replace')
+#         logging.info(f"Table {source} for {job_title} created!")
+#     else:
+#         logging.info('Source not found.')
 
 
 
