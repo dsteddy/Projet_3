@@ -2,12 +2,18 @@
 
 .body-content {
     /* Ajoutez ici le code hexadécimal de la couleur de fond correspondant à votre logo */
-    background-color: #9A8B75; /* Exemple de couleur */
+    background-color: #82994a; /* Exemple de couleur */
     height: 100vh;
 }
 
 body {
-    background-color: #9A8B75; /* Votre couleur de fond */
+    background-color: #f6f6f5; /* Votre couleur de fond */
+    font-family: 'roboto', sans-serif;
+}
+
+@font-face {
+    font-family: 'roboto';
+    src: url('assets/roboto.ttf') format('truetype'); /* Ajuste l'extension du fichier si nécessaire */
 }
 
 .header {
@@ -31,6 +37,10 @@ body {
 
 .navigation .menu-link:hover {
     color: red;
+}
+
+h4 {
+    font-weight: normal; /* Désactive la mise en gras */
 }
 
 /* Style pour les onglets */
@@ -78,4 +88,8 @@ body {
     flex: 1;
     padding: 10px;
     border: 1px solid #ddd; /* Bordure pour les cellules de données */
+}
+
+.DatePickerRange {
+    height: 400px;  /* Ajuste la hauteur selon tes préférences */
 }

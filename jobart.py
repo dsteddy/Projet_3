@@ -32,16 +32,20 @@ logiciel_options = tech_skills_list()
 # Options de la liste à choix multiple pour le type de contrat
 contrat_options = ['CDI', 'CDD', 'alternance', 'stage']
 
-app.layout = html.Div(
-    children=[
+app.layout = html.Div([
+    html.Link(
+        rel='stylesheet',
+        href='/assets/custom.css'  # Assure-toi d'ajuster le chemin si nécessaire
+    ),
+    html.Div(children=[
         # Ajoutez un logo à gauche du titre
         html.Div([
-            html.Img(src='assets/jobarts.png', style={'width': '100px', 'height': '100px', 'borderRadius': '50%'}),
-            html.H1("Jobart's", style={'textAlign': 'center', 'fontWeight': 'bold', 'marginLeft': '20px'}),
+            html.Img(src='assets/jobarts.png', style={'width': '15%', 'height': '15%', 'borderRadius': '50%'}),
+            # html.H4("JOB'ARTS", style={'textAlign': 'center', 'marginLeft': '20px'}),
         ], style={'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center', 'marginBottom': '20px'}),
 
         # Espace au début de l'application
-        html.Div(style={'height': '20px'}),
+        html.Div(style={'height': '2%'}),
 
         # Conteneur principal
         html.Div(
@@ -50,7 +54,7 @@ app.layout = html.Div(
                 html.Div([
                     # Titre et liste déroulante pour le métier sur la même ligne
                     html.Div([
-                        html.H4("Métier Recherche"),
+                        html.H4("METIER"),
                         dcc.Dropdown(
                             id='job-dropdown',
                             options=[{'label': job, 'value': job} for job in job_options],
@@ -59,7 +63,7 @@ app.layout = html.Div(
                             style={'width': '30%', 'minWidth': '300px'},  # Largeur de 30% avec une largeur minimale
                             placeholder='Sélectionnez un ou plusieurs métiers'
                         ),
-                    ], style={'display': 'inline-block', 'width': '30%', 'marginRight': '50px'}),
+                    ], style={'display': 'inline-block', 'width': '30%', 'marginLeft': '5%'}),
 
                     # Titre et liste déroulante pour les régions sur la même ligne
                     html.Div([
@@ -69,7 +73,7 @@ app.layout = html.Div(
                             options=[{'label': region, 'value': region} for region in region_options],
                             value=[],  # Aucune sélection par défaut (liste à choix multiple)
                             multi=True,  # Liste à choix multiple
-                            style={'width': '30%', 'minWidth': '300px', 'marginRight': '50px'},  # Largeur de 30% avec une largeur minimale
+                            style={'width': '30%', 'minWidth': '300px', 'marginRight': '5%'},  # Largeur de 30% avec une largeur minimale
                             placeholder='Sélectionnez une ou plusieurs régions'
                         ),
                     ], style={'display': 'inline-block', 'width': '30%'}),
@@ -82,11 +86,11 @@ app.layout = html.Div(
                             options=[{'label': competence, 'value': competence} for competence in competence_options],
                             value=[],  # Aucune sélection par défaut (liste à choix multiple)
                             multi=True,  # Liste à choix multiple
-                            style={'width': '30%', 'minWidth': '300px'},  # Largeur de 30% avec une largeur minimale
+                            style={'width': '20%', 'minWidth': '300px'},  # Largeur de 30% avec une largeur minimale
                             placeholder='Sélectionnez une ou plusieurs compétences'
                         ),
-                    ], style={'display': 'inline-block', 'width': '30%', 'marginTop': '10px', 'marginRight': '20px'}),
-                ]),
+                    ], style={'display': 'inline-block', 'width': '20%', 'marginRight': '20px'}),
+                ],  style={'width': '100%', 'marginBottom': '2%'}),
 
                 # Deuxième ligne avec deux listes déroulantes
                 html.Div([
@@ -101,7 +105,7 @@ app.layout = html.Div(
                             style={'width': '30%', 'minWidth': '300px', 'marginRight': '300px'},  # Largeur de 30% avec une largeur minimale
                             placeholder='Sélectionnez un ou plusieurs logiciels'
                         ),
-                    ], style={'display': 'inline-block', 'width': '30%', 'marginTop': '10px'}),
+                    ], style={'display': 'inline-block', 'width': '30%', 'marginLeft': '5%', 'verticalAlign': 'top'}),
 
                     # Titre et liste à choix multiple pour le type de contrat sur la même ligne
                     html.Div([
@@ -114,7 +118,7 @@ app.layout = html.Div(
                             style={'width': '30%', 'minWidth': '300px'},  # Largeur de 30% avec une largeur minimale
                             placeholder='Sélectionnez un ou plusieurs type de contrat'
                         ),
-                    ], style={'display': 'inline-block', 'width': '30%', 'marginTop': '10px'}),
+                    ], style={'display': 'inline-block', 'width': '30%', 'verticalAlign': 'top'}),
                     
                   # Sélecteur de temps (date)
                     html.Div([
@@ -124,10 +128,11 @@ app.layout = html.Div(
                             start_date=df_subset['date_publication'].min(),  # Date de début basée sur la valeur minimale dans le DataFrame
                             end_date=df_subset['date_publication'].max(),  # Date de fin basée sur la valeur maximale dans le DataFrame
                             display_format='DD/MM/YYYY',  # Format d'affichage de la date
-                            style={'fontSize': 14, 'display': 'inline-block', 'width': '70%'},  # Ajustements de style pour la taille du texte
+                            className='DatePickerRange', 
+                            style={'width': '100%', 'height': '40px'},
                         ),
-                    ], style={'display': 'inline-block', 'width': '30%', 'marginTop': '10px'}),
-                ]),
+                    ], style={'display': 'inline-block', 'width': '30%', 'verticalAlign': 'top'}),
+                ],  style={'width': '100%'}),
                 
                 # Espace avant les onglets
                 html.Div(style={'height': '40px'}),
@@ -145,8 +150,8 @@ app.layout = html.Div(
 
         # Contenu des onglets
         html.Div(id='tabs-content')
-    ]
-)
+    ])
+])
 
 # Callback pour mettre à jour le contenu des onglets
 @app.callback(
