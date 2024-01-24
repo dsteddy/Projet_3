@@ -12,7 +12,9 @@ from offres_emploi.utils import dt_to_str_iso
 from dotenv import load_dotenv
 import os
 
-# import sqlalchemy
+import json
+
+import sqlalchemy
 
 from offres_emploi import Api
 import datetime
@@ -120,6 +122,7 @@ def scrapping(job_title: str, page : int = None):
         df["soft_skills"] = df["description"].apply(extract_soft_skills)
         df.drop("description_cleaned", axis=1, inplace=True)
         df.to_parquet(f'datasets/all_jobs.parquet', index=False)
+        create_sql_table(df)
         logging.info("Finished!")
     else:
         job_title_nom_fichier = job_title.replace(" ", "_")
@@ -831,6 +834,15 @@ def regroup_soft_skills(soft_skills):
 
 
 # SQL
+def create_sql_table(df):
+    df['tech_skills'] = df['tech_skills'].apply(json.dumps)
+    df['soft_skills'] = df['soft_skills'].apply(json.dumps) 
+    engine = sqlalchemy.create_engine('sqlite:///database/job_offers.sqlite')
+    df.to_sql('all_jobs', con=engine, index=False, if_exists='replace')
+
+
+
+
 # def create_sql_table(
 #         source: str,
 #         df: pd.DataFrame,
