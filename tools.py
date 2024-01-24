@@ -12,14 +12,13 @@ from offres_emploi.utils import dt_to_str_iso
 from dotenv import load_dotenv
 import os
 
-import sqlalchemy
+# import sqlalchemy
 
 from offres_emploi import Api
 import datetime
 
 import re
 
-import numpy as np
 import pandas as pd
 
 import asyncio
@@ -115,7 +114,7 @@ def scrapping(job_title: str, page : int = None):
         logging.info("Dropping duplicates...")
         df = df.drop_duplicates(subset="description", keep="first")
         logging.info("Extracting Skills...")
-        df[df["description"].isna()] = "Aucune info"
+        df.dropna(subset="description", inplace = True)
         df = clean_description(df)
         df["tech_skills"] = df["description"].apply(extract_tech_skills)
         df["soft_skills"] = df["description"].apply(extract_soft_skills)
@@ -189,7 +188,9 @@ def job_offers_wttj(
     # Instanciation du driver Firefox.
     options = FirefoxOptions()
     options.add_argument("--headless")
-    driver = webdriver.Firefox(options=options)
+    driver = webdriver.Firefox(
+        options=options,
+        )
     # Ouverture de la première page.
     if page == None:
         url = f"https://www.welcometothejungle.com/fr/jobs?refinementList%5Boffices.country_code%5D%5B%5D=FR&query={job}&page=1"
@@ -204,6 +205,7 @@ def job_offers_wttj(
             logging.info(f"Starting job offer scrapping for {page_max} pages on Welcome To The Jungle...")
         except:
             logging.info("Page number not found, scrapping for 1 page on Welcome To The Jungle...")
+            page_max = 1
     else:
         page_max = page
     try:
@@ -347,7 +349,7 @@ def job_offers_pole_emploi(
     client_id = os.getenv('USER_POLE_EMPLOI')
     api_key = os.getenv('API_KEY_POLE_EMPLOI')
     # Initialisation des variables locales
-    cols_to_drop = create_cols_to_keep('pole emploi')
+    cols_to_keep = create_cols_to_keep('pole emploi')
     results = []
     start_range = 0
     max_results = float('inf')
@@ -375,6 +377,8 @@ def job_offers_pole_emploi(
             df_emploi = pd.DataFrame(results)
 
             df_final = clean_dict_columns(df_emploi)
+
+            cols_to_drop = [col for col in df_final.columns if col not in cols_to_keep]
             df_final.drop(cols_to_drop, axis=1, inplace=True)
             df_final = rename_and_reorder_cols("pole emploi", df_final)
             logging.info("Dataframe Created!")
@@ -543,7 +547,7 @@ def create_cols_to_keep(
         "name",                         # intitule
         "salary_period",                # salaire
         "office.city",                  # ville
-        "office.zip_code",              # code postal
+        "office.zip_code",              # code_postal
         "education_level",              # niveau_etudes
         "description",                  # description
         "organization.name",            # entreprise
@@ -557,41 +561,41 @@ def create_cols_to_keep(
         return cols_to_keep
 
     if site == "pole emploi":
-        cols_to_drop = [
-                "id",
-                "lieuTravail",
-                "romeCode",
-                "romeLibelle",
-                "origineOffre",
-                "appellationlibelle",
-                "natureContrat",
-                "entreprise",
-                "typeContratLibelle",
-                "experienceExige",
-                "experienceLibelle",
-                "formations",
-                "langues",
-                "salaire",
-                "alternance",
-                "contact",
-                "nombrePostes",
-                "accessibleTH",
-                "deplacementCode",
-                "deplacementLibelle",
-                "qualificationCode",
-                "qualificationLibelle",
-                "codeNAF",
-                "secteurActivite",
-                "qualitesProfessionnelles",
-                "offresManqueCandidats",
-                "experienceCommentaire",
-                "permis",
-                "complementExercice",
-                "competences",
-                "agence",
-                "dateActualisation",
+        cols_to_keep = [
+                "dateCreation",             # date_publication
+                "typeContrat",              # contrat
+                "intitule",                 # intitule
+                "description",              # description
+                "secteurActiviteLibelle",   # secteur_activite
+                "niveauLibelle",            # niveau_etudes
+                "libelle",                  # salaire
+                "nom",                      # entreprise
+                "description_entreprise",   # description_entreprise
+                "ville",                    # ville
+                "urlOrigine",               # link
+                # "formations",
+                # "langues",
+                # "salaire",
+                # "alternance",
+                # "contact",
+                # "nombrePostes",
+                # "accessibleTH",
+                # "deplacementCode",
+                # "deplacementLibelle",
+                # "qualificationCode",
+                # "qualificationLibelle",
+                # "codeNAF",
+                # "secteurActivite",
+                # "qualitesProfessionnelles",
+                # "offresManqueCandidats",
+                # "experienceCommentaire",
+                # "permis",
+                # "complementExercice",
+                # "competences",
+                # "agence",
+                # "dateActualisation",
             ]
-        return cols_to_drop
+        return cols_to_keep
 
 def rename_and_reorder_cols(
         source: str,
