@@ -45,7 +45,7 @@ def scrapping(job_title: str, page : int = None):
     '''
     Fonction principale pour récupérer les infos et créer les bases de
     données.
-    ---
+
     Paramètres:
     ---
     job_title: str: Intitulé du poste pour lequel rechercher les offres
@@ -53,8 +53,8 @@ def scrapping(job_title: str, page : int = None):
     '''
     if job_title == 'all':
         # Data Analyst
-        logging.info("-----")
-        logging.info("Data Analyst")
+        logging.info("------------------------------")
+        logging.info("Getting Data Analyst offers...")
         wttj_analyst = job_offers_wttj("data+analyst")
         wttj_analyst = clean_date(wttj_analyst)
 
@@ -69,8 +69,8 @@ def scrapping(job_title: str, page : int = None):
         pe_analyst = clean_date(pe_analyst)
 
         # Data Engineer
-        logging.info("-----")
-        logging.info("Data Engineer")
+        logging.info("------------------------------")
+        logging.info("Getting Data Engineer offers...")
         wttj_engineer = job_offers_wttj("data+engineer")
         wttj_engineer = clean_date(wttj_engineer)
 
@@ -85,8 +85,8 @@ def scrapping(job_title: str, page : int = None):
         pe_engineer = clean_date(pe_engineer)
 
         # Data Scientist
-        logging.info("-----")
-        logging.info("Data Scientist")
+        logging.info("------------------------------")
+        logging.info("Getting Data Scientist offers...")
         wttj_scientist = job_offers_wttj("data+scientist")
         wttj_scientist = clean_date(wttj_scientist)
 
@@ -102,7 +102,7 @@ def scrapping(job_title: str, page : int = None):
 
 
         # Concat all
-        logging.info("Concat dataframes...")
+        logging.info("Regrouping dataframes...")
         df = pd.concat(
             [
                 wttj_analyst,
@@ -111,17 +111,16 @@ def scrapping(job_title: str, page : int = None):
                 pe_analyst,
                 pe_engineer,
                 pe_scientist
-        ], ignore_index=True
+                ],
+            ignore_index=True
         )
         logging.info("Dropping duplicates...")
         df = df.drop_duplicates(subset="description", keep="first")
-        logging.info("Extracting Skills...")
-        df.dropna(subset="description", inplace = True)
-        df = clean_description(df)
-        df["tech_skills"] = df["description"].apply(extract_tech_skills)
-        df["soft_skills"] = df["description"].apply(extract_soft_skills)
-        df.drop("description_cleaned", axis=1, inplace=True)
+        df = extract_skills(df)
+        # df["secteur_activite"] = df["secteur_activite"].apply(clean_secteur_activite)
+        logging.info("Saving .parquet file...")
         df.to_parquet(f'datasets/all_jobs.parquet', index=False)
+        logging.info("Updating .sqlite DB...")
         create_sql_table(df)
         logging.info("Finished!")
     else:
@@ -130,11 +129,9 @@ def scrapping(job_title: str, page : int = None):
         # WTTJ
         df_wttj = job_offers_wttj(job_title, page)
         df_wttj = clean_date(df_wttj)
-        df_wttj[df_wttj["description"].isna()] = "Aucune info"
-        df_wttj = clean_description(df_wttj)
-        df_wttj["tech_skills"] = df_wttj["description"].apply(extract_tech_skills)
-        df_wttj["soft_skills"] = df_wttj["description"].apply(extract_soft_skills)
-        df_wttj.drop("description_cleaned", axis=1, inplace=True)
+        df_wttj = extract_skills(df_wttj)
+        # df_wttj["secteur_activite"] = df_wttj["secteur_activite"].apply(clean_secteur_activite)
+        logging.info(f"Saving WTTJ_{job_title_nom_fichier}.parquet...")
         df_wttj.to_parquet(
             f'datasets/WTTJ_{job_title_nom_fichier}.parquet', index=False
         )
@@ -149,18 +146,17 @@ def scrapping(job_title: str, page : int = None):
         }
         df_pole_emploi = job_offers_pole_emploi(params)
         df_pole_emploi = clean_date(df_pole_emploi)
-        df_pole_emploi[df_pole_emploi["description"].isna()] = "Aucune info"
-        df_pole_emploi = clean_description(df_pole_emploi)
-        df_pole_emploi["tech_skills"] = df_pole_emploi["description"].apply(extract_tech_skills)
-        df_pole_emploi["soft_skills"] = df_pole_emploi["description"].apply(extract_soft_skills)
-        df_pole_emploi.drop("description_cleaned", axis=1, inplace=True)
+        df_pole_emploi = extract_skills(df_pole_emploi)
+        # df_pole_emploi["secteur_activite"] = df_pole_emploi["secteur_activite"].apply(clean_secteur_activite)
+        logging.info(f"Saving pole_emploi_{job_title_nom_fichier}.parquet...")
         df_pole_emploi.to_parquet(
             f'datasets/pole_emploi_{job_title_nom_fichier}.parquet', index=False
         )
-
         # Concat both
+        logging.info("Regrouping both dataframes...")
         df = pd.concat([df_wttj, df_pole_emploi], ignore_index=True)
         df.to_parquet(f'datasets/{job_title_nom_fichier}.parquet', index=False)
+        logging.info("Finished!")
 
 
 # Welcome To The Jungle
@@ -171,18 +167,17 @@ def job_offers_wttj(
     '''
     Scrapping de toutes les offres d'emploi du site Welcome To The Jungle
     pour le job indiqué.
-    ---
+
     Paramètres:
     ---
     job_title: str: Nom de l'intitulé du job pour lequel rechercher les
     offres.
-    ---
+
     Retourne:
     ---
     df: pd.DataFrame: dataframe contenant les informations de chaque offres
     d'emploi trouvée.
     '''
-    cols_to_keep = create_cols_to_keep('wttj')
     # Instanciation de la liste contenant les liens pour les requêtes APIs.
     api_links = []
     # Lien de l'API de Welcome To The Jungle pour récupérer les données.
@@ -233,12 +228,12 @@ def job_offers_wttj(
         driver.quit()
         # Pour chaque lien de la liste, fait une requête API et stocke les informations dans un dataframe.
     logging.info("Scrapping done!")
-    df = asyncio.run(fetch_all(api_links, cols_to_keep))
+    df = asyncio.run(fetch_all(api_links))
     return df
 
 async def fetch_all(
         api_links:list,
-        cols_to_keep:list
+        # cols_to_keep:list
     ) -> pd.DataFrame:
     '''
     Lance toutes les requêtes API pour Welcome To The jungle et créée
@@ -262,39 +257,31 @@ async def fetch_all(
         responses = await asyncio.gather(*tasks)
     logging.info("API requests done!")
 
-    logging.info("Concatening dataframes...")
+    logging.info("Creating dataframe...")
     full_df = pd.concat([pd.json_normalize(resp["job"]) for resp in responses if "job" in resp], ignore_index=True)
 
-    cols_to_drop = [col for col in full_df.columns if col not in cols_to_keep]
+    df = global_clean_wttj(full_df)
+    logging.info("Welcome To The Jungle DataFrame done!")
 
-    df_urls = pd.json_normalize(full_df["urls"])
-    df_urls["link"] = df_urls[0]
-    df_urls = df_urls.drop(columns=[0,1])
-    df_urls["link"] = df_urls["link"].apply(clean_link)
-    url_merged = pd.concat([full_df, df_urls], axis=1)
-
-    df = url_merged.drop(columns=cols_to_drop)
-    logging.info("DataFrame done!")
-
-    df["description"] = df["description"].apply(clean_html)
-    df["organization.description"] = df["organization.description"].apply(clean_html)
-    df[df["salary_period"].isna()] = None
-    df[df["salary_max"].isna()] = None
-    df[df["salary_min"].isna()] = None
-    df["salaire"] = df.apply(lambda row: clean_salaire_wttj(
-        row["salary_period"], row["salary_max"], row["salary_min"]
-    ), axis = 1)
-    df = rename_and_reorder_cols("wttj", df)
-    df["niveau_etudes"] = df["niveau_etudes"].astype(str)
-    df["niveau_etudes"] = df["niveau_etudes"].apply(clean_experience)
-    df["contrat"] = df["contrat"].str.replace(
-        "full_time", "CDI"
-        ).str.replace("internship", "Stage"
-        ).str.replace("apprenticeship", "Alternance"
-        ).str.replace("temporary", "CDD"
-        ).str.replace("other", "Autre"
-        ).str.replace("vie", "CDI"
-    )
+    # df["description"] = df["description"].apply(clean_html)
+    # df["organization.description"] = df["organization.description"].apply(clean_html)
+    # df[df["salary_period"].isna()] = None
+    # df[df["salary_max"].isna()] = None
+    # df[df["salary_min"].isna()] = None
+    # df["salaire"] = df.apply(lambda row: clean_salaire_wttj(
+    #     row["salary_period"], row["salary_max"], row["salary_min"]
+    # ), axis = 1)
+    # df = rename_and_reorder_cols("wttj", df)
+    # df["niveau_etudes"] = df["niveau_etudes"].astype(str)
+    # df["niveau_etudes"] = df["niveau_etudes"].apply(clean_experience)
+    # df["contrat"] = df["contrat"].str.replace(
+    #     "full_time", "CDI"
+    #     ).str.replace("internship", "Stage"
+    #     ).str.replace("apprenticeship", "Alternance"
+    #     ).str.replace("temporary", "CDD"
+    #     ).str.replace("other", "Autre"
+    #     ).str.replace("vie", "CDI"
+    # )
     return df
 
 async def fetch(
@@ -329,6 +316,45 @@ def clean_link(text):
     cleaned_link = text["href"]
     return cleaned_link
 
+def global_clean_wttj(df_to_clean):
+    # Creating list of cols_to_drop
+    cols_to_keep = create_cols_to_keep('wttj', df_to_clean)
+    cols_to_drop = [col for col in df_to_clean.columns if col not in cols_to_keep]
+    # Cleaning link column
+    df_urls = pd.json_normalize(df_to_clean["urls"])
+    df_urls["link"] = df_urls[0]
+    df_urls = df_urls.drop(columns=[0,1])
+    df_urls["link"] = df_urls["link"].apply(clean_link)
+    url_merged = pd.concat([df_to_clean, df_urls], axis=1)
+    # Dropping unused columns
+    df = url_merged.drop(columns=cols_to_drop)
+    # Cleaning all remaining columns
+    df["description"] = df["description"].apply(clean_html)
+    df["organization.description"] = df["organization.description"].apply(clean_html)
+    df[df["salary_period"].isna()] = None
+    df[df["salary_max"].isna()] = None
+    df[df["salary_min"].isna()] = None
+    df["salaire"] = df.apply(lambda row: clean_salaire_wttj(
+        row["salary_period"], row["salary_max"], row["salary_min"]
+    ), axis = 1)
+
+    df = rename_and_reorder_cols("wttj", df)
+
+    df["contrat"] = df["contrat"].str.replace(
+        "full_time", "CDI"
+        ).str.replace("internship", "Stage"
+        ).str.replace("apprenticeship", "Alternance"
+        ).str.replace("temporary", "CDD"
+        ).str.replace("other", "Autre"
+        ).str.replace("vie", "CDI"
+    )
+    df["niveau_etudes"] = df["niveau_etudes"].astype(str)
+    df["niveau_etudes"] = df["niveau_etudes"].apply(clean_experience)
+
+    df["secteur_activite"] = df["secteur_activite"].apply(clean_secteur_activite)
+
+    return df
+
 
 # Pole Emploi
 def job_offers_pole_emploi(
@@ -352,7 +378,7 @@ def job_offers_pole_emploi(
     client_id = os.getenv('USER_POLE_EMPLOI')
     api_key = os.getenv('API_KEY_POLE_EMPLOI')
     # Initialisation des variables locales
-    cols_to_keep = create_cols_to_keep('pole emploi')
+    # cols_to_keep = create_cols_to_keep('pole emploi')
     results = []
     start_range = 0
     max_results = float('inf')
@@ -375,32 +401,29 @@ def job_offers_pole_emploi(
 
             # Mettre à jour la plage de départ pour la prochaine itération
             start_range += 150
-
-        if max_results > 0:
-            df_emploi = pd.DataFrame(results)
-
-            df_final = clean_dict_columns(df_emploi)
-
-            cols_to_drop = [col for col in df_final.columns if col not in cols_to_keep]
-            df_final.drop(cols_to_drop, axis=1, inplace=True)
-            df_final = rename_and_reorder_cols("pole emploi", df_final)
-            logging.info("Dataframe Created!")
-
-            df_final["description"] = df_final["description"].apply(clean_html)
-            df_final["niveau_etudes"] = df_final["niveau_etudes"].astype(str)
-            df_final["niveau_etudes"] = df_final["niveau_etudes"].apply(clean_experience)
-            df_final["ville"] = df_final["ville"].str.title().str.replace(r"\d+", "", regex=True).str.replace("-", "").str.strip()
-            df_final["contrat"] = df_final["contrat"].str.replace("MIS", "Interim").str.replace("FRA", "Autre").str.replace("LIB", "Autre")
-            df_final[df_final["salaire"].isna()] = None
-            df_final["salaire"] = df_final["salaire"].apply(clean_salaire_pe)
-            return df_final
-
-        else:
-            print("Aucune offre d'emploi trouvée.")
-            return pd.DataFrame()
-
     except Exception as e:
         print(f"Une erreur s'est produite lors de la recherche : {e}")
+    if max_results > 0:
+        df_emploi = pd.DataFrame(results)
+        df_final = global_clean_pe(df_emploi)
+        logging.info("Pole Emploi DataFrame done!")
+
+        # df_final = clean_dict_columns(df_emploi)
+        # cols_to_drop = [col for col in df_final.columns if col not in cols_to_keep]
+        # df_final.drop(cols_to_drop, axis=1, inplace=True)
+        # df_final = rename_and_reorder_cols("pole emploi", df_final)
+
+        # df_final["description"] = df_final["description"].apply(clean_html)
+        # df_final["niveau_etudes"] = df_final["niveau_etudes"].astype(str)
+        # df_final["niveau_etudes"] = df_final["niveau_etudes"].apply(clean_experience)
+        # df_final["ville"] = df_final["ville"].str.title().str.replace(r"\d+", "", regex=True).str.replace("-", "").str.strip()
+        # df_final["contrat"] = df_final["contrat"].str.replace("MIS", "Interim").str.replace("FRA", "Autre").str.replace("LIB", "Autre")
+        # df_final[df_final["salaire"].isna()] = None
+        # df_final["salaire"] = df_final["salaire"].apply(clean_salaire_pe)
+        return df_final
+    else:
+        print("Aucune offre d'emploi trouvée.")
+        return pd.DataFrame()
 
 def clean_dict_columns(
         df: pd.DataFrame
@@ -418,22 +441,78 @@ def clean_dict_columns(
     df_final: pd.DataFrame: dataframe avec les dictionnaires séparés en
     plusieurs colonnes.
     '''
-    df_lieu_travail = pd.json_normalize(df["lieuTravail"])
-    df_lieu_travail.drop(["latitude", "longitude", "commune"], axis=1, inplace=True)
-    df_lieu_travail.rename({"libelle" : "ville"}, axis = 1, inplace = True)
-    df_entreprise = pd.json_normalize(df["entreprise"])
-    df_entreprise.drop(["entrepriseAdaptee", 'url', 'logo'], axis=1, inplace=True)
-    df_entreprise.rename({"description" : "description_entreprise"}, axis=1, inplace=True)
-    df_salaire = pd.json_normalize(df["salaire"])
-    df_salaire.drop(["complement1", "complement2", "commentaire"], axis=1, inplace=True)
-    df_formations = df["formations"].explode()
-    df_formations = pd.json_normalize(df_formations)
-    df_formations.drop(["codeFormation", "domaineLibelle", "exigence", "commentaire"], axis=1, inplace=True)
-    df_origine = pd.json_normalize(df["origineOffre"])
-    df_origine.drop(["origine", "partenaires"], axis=1, inplace=True)
-    df_final = pd.concat([df, df_formations, df_salaire, df_entreprise, df_lieu_travail, df_origine], axis=1)
+    dict_cols = [
+        ("lieuTravail", ["latitude", "longitude", "commune"]),
+        ("entreprise", ["entrepriseAdaptee", "url"]),
+        ("salaire", ["complement1", "complement2", "commentaire"]),
+        ("formations", ["codeFormation", "domaineLibelle", "exigence", "commentaire"]),
+        ("origineOffre", ["origine", "partenaires"]),
+    ]
+
+    if dict_cols[0][0] in df.columns:
+        df_lieu_travail = pd.json_normalize(df["lieuTravail"])
+    for cols in dict_cols[0][1]:
+        if cols in df_lieu_travail.columns:
+            df_lieu_travail.drop(cols, axis=1, inplace=True)
+    if "libelle" in df_lieu_travail.columns:
+        df_lieu_travail.rename({"libelle" : "ville"}, axis = 1, inplace = True)
+
+    if dict_cols[1][0] in df.columns:
+        df_entreprise = pd.json_normalize(df["entreprise"])
+    for cols in dict_cols[1][1]:
+        if cols in df_entreprise.columns:
+            df_entreprise.drop(cols, axis=1, inplace=True)
+    if "description" in df_entreprise:
+        df_entreprise.rename({"description" : "description_entreprise"}, axis=1, inplace=True)
+
+    if dict_cols[2][0] in df.columns:
+        df_salaire = pd.json_normalize(df["salaire"])
+    for cols in dict_cols[2][1]:
+        if cols in df_salaire.columns:
+            df_salaire.drop(cols, axis=1, inplace=True)
+
+    if dict_cols[3][0] in df.columns:
+        df_formations = df["formations"].explode()
+        df_formations = pd.json_normalize(df_formations)
+    for cols in dict_cols[3][1]:
+        if cols in df_formations:
+            df_formations.drop(cols, axis=1, inplace=True)
+
+    if dict_cols[4][0] in df.columns:
+        df_origine = pd.json_normalize(df["origineOffre"])
+    for cols in dict_cols[4][1]:
+        if cols in df_origine.columns:
+            df_origine.drop(cols, axis=1, inplace=True)
+
+    df_final = pd.concat(
+        [
+            df,
+            df_formations,
+            df_salaire,
+            df_entreprise,
+            df_lieu_travail,
+            df_origine
+    ], axis=1)
     return df_final
 
+def global_clean_pe(df_to_clean):
+    # Separating dictionnaries in columns
+    df_to_clean = clean_dict_columns(df_to_clean)
+    cols_to_keep = create_cols_to_keep('pole emploi', df_to_clean)
+    cols_to_drop = [col for col in df_to_clean.columns if col not in cols_to_keep]
+    # Dropping unused columns
+    df_to_clean.drop(cols_to_drop, axis=1, inplace=True)
+    df = rename_and_reorder_cols("pole emploi", df_to_clean)
+    # Cleaning remaining columns
+    df["niveau_etudes"] = df["niveau_etudes"].astype(str)
+    df["niveau_etudes"] = df["niveau_etudes"].apply(clean_experience)
+    df["ville"] = df["ville"].str.title().str.replace(r"\d+", "", regex=True).str.replace("-", "").str.strip()
+    df["contrat"] = df["contrat"].str.replace("MIS", "Interim").str.replace("FRA", "Autre").str.replace("LIB", "Autre")
+    df[df["salaire"].isna()] = None
+    df["salaire"] = df["salaire"].apply(clean_salaire_pe)
+    df["secteur_activite"] = df["secteur_activite"].apply(clean_secteur_activite)
+
+    return df
 
 # Data Cleaning
 def clean_html(text):
@@ -466,13 +545,14 @@ def clean_experience(text) -> str:
     if "bac+2" in text or "bac_2" in text:
         return "Bac +2"
     else:
-        return None
+        return "Aucune information"
 
 def clean_date(
         df: pd.DataFrame,
     ):
-    df["date_publication"] = pd.to_datetime(df["date_publication"])
-    df["date_publication"] = df["date_publication"].dt.strftime("%Y-%m-%d")
+    if "date_publication" in df.columns:
+        df["date_publication"] = pd.to_datetime(df["date_publication"])
+        df["date_publication"] = df["date_publication"].dt.strftime("%Y-%m-%d")
     return df
 
 def clean_salaire_pe(text):
@@ -530,10 +610,17 @@ def clean_salaire_wttj(salary_period, salary_max, salary_min):
     else:
         return f'Salaire non indiqué'
 
+def clean_secteur_activite(text):
+    if text == None:
+        return "Aucune information"
+    else:
+        return text
+
 
 # Reordering/renaming
 def create_cols_to_keep(
-        site: str
+        site: str,
+        df: pd.DataFrame
     ) -> list:
     '''
     Créer la liste des colonnes à garder et/ou à drop pour le
@@ -545,26 +632,25 @@ def create_cols_to_keep(
     pole emploi ou linkedin)
     '''
     if site == "wttj":
-        cols_to_keep = [
+        cols = [
         "published_at",                 # date_publication
+        "contract_type",                # contract
         "name",                         # intitule
-        "salary_period",                # salaire
-        "office.city",                  # ville
-        "office.zip_code",              # code_postal
-        "education_level",              # niveau_etudes
         "description",                  # description
+        "organization.industry",        # secteur_activite
+        "education_level",              # niveau_etudes
+        "salary_period",                # salaire
         "organization.name",            # entreprise
         "organization.description",     # description_entreprise
-        "organization.industry",        # secteur_activite
-        "contract_type",                # contract_type
+        "office.city",                  # ville
+        "link",                         # link
+        "organization.logo.url",        # logo
         "salary_min",                   # salaire(2)
         "salary_max",                   # salaire(3)
-        "link",                         # link
+        "experience_level",             # experience
     ]
-        return cols_to_keep
-
     if site == "pole emploi":
-        cols_to_keep = [
+        cols = [
                 "dateCreation",             # date_publication
                 "typeContrat",              # contrat
                 "intitule",                 # intitule
@@ -576,29 +662,11 @@ def create_cols_to_keep(
                 "description_entreprise",   # description_entreprise
                 "ville",                    # ville
                 "urlOrigine",               # link
-                # "formations",
-                # "langues",
-                # "salaire",
-                # "alternance",
-                # "contact",
-                # "nombrePostes",
-                # "accessibleTH",
-                # "deplacementCode",
-                # "deplacementLibelle",
-                # "qualificationCode",
-                # "qualificationLibelle",
-                # "codeNAF",
-                # "secteurActivite",
-                # "qualitesProfessionnelles",
-                # "offresManqueCandidats",
-                # "experienceCommentaire",
-                # "permis",
-                # "complementExercice",
-                # "competences",
-                # "agence",
-                # "dateActualisation",
+                "logo",                     # logo
+                "experienceLibelle",        # experience
             ]
-        return cols_to_keep
+    cols_to_keep = [col for col in cols if col in df.columns]
+    return cols_to_keep
 
 def rename_and_reorder_cols(
         source: str,
@@ -619,21 +687,19 @@ def rename_and_reorder_cols(
     if source == "wttj":
         df.rename(
         {
-            'education_level' : 'niveau_etudes',
+            'published_at' : 'date_publication',
             'contract_type' : 'contrat',
             'name' : 'intitule',
-            'published_at' : 'date_publication',
-            'experience_level' : 'experience',
-            'office.city' : 'ville',
-            'office.zip_code' : 'code_postal',
+            'organization.industry' : 'secteur_activite',
+            'education_level' : 'niveau_etudes',
             "organization.name" : "entreprise",
             'organization.description' : 'description_entreprise',
-            'organization.industry' : 'secteur_activite',
+            'office.city' : 'ville',
+            'organization.logo.url' : 'logo',
+            'experience_level' : 'experience',
             }, axis = 1, inplace = True
         )
-        liste_cols = reorder_cols(source)
-        df = df[liste_cols]
-        return df
+
     elif source == "pole emploi":
         df.rename(
                 {
@@ -646,14 +712,15 @@ def rename_and_reorder_cols(
                     'niveauLibelle' : 'niveau_etudes',
                     'libelle' : 'salaire',
                     'nom' : 'entreprise',
+                    "experienceLibelle" : "experience",
                 }, axis = 1, inplace = True
             )
-        liste_cols = reorder_cols()
-        df = df[liste_cols]
-        return df
+    liste_cols = reorder_cols()
+    df = df[liste_cols]
+    return df
 
 def reorder_cols(
-        site: str = None
+        # site: str = None
 ) -> list:
     '''
     Créer la liste pour l'ordre dans lequel afficher les colonnes
@@ -663,35 +730,21 @@ def reorder_cols(
     ---
     liste_cols: list: Liste contenant les colonnes dans l'ordre défini.
     '''
-    if site == "wttj":
-        liste_cols = [
-            "date_publication",
-            "contrat",
-            "intitule",
-            "description",
-            "secteur_activite",
-            "niveau_etudes",
-            "salaire",
-            "entreprise",
-            "description_entreprise",
-            "ville",
-            "link",
-        ]
-
-    else:
-        liste_cols = [
-            "date_publication",
-            "contrat",
-            "intitule",
-            "description",
-            "secteur_activite",
-            "niveau_etudes",
-            "salaire",
-            "entreprise",
-            "description_entreprise",
-            "ville",
-            "link",
-        ]
+    liste_cols = [
+        "date_publication",
+        "contrat",
+        "intitule",
+        "description",
+        "secteur_activite",
+        "niveau_etudes",
+        "experience",
+        "salaire",
+        "entreprise",
+        "description_entreprise",
+        "ville",
+        "link",
+        "logo",
+    ]
     return liste_cols
 
 
@@ -792,38 +845,38 @@ def extract_soft_skills(description):
 
 def regroup_tech_skills(tech_skills):
     if "machine" in tech_skills and "learning" in tech_skills:
-        tech_skills.append("machine learning")
+        tech_skills.append("Machine Learning")
         tech_skills.remove("machine")
         tech_skills.remove("learning")
     if "power" in tech_skills and "bi" in tech_skills:
-        tech_skills.append("power bi")
+        tech_skills.append("Power BI")
         tech_skills.remove("power")
         tech_skills.remove("bi")
     if "data" in tech_skills and "iku" in tech_skills:
-        tech_skills.append("dataiku")
+        tech_skills.append("Dataiku")
         tech_skills.remove("iku")
     if "data" in tech_skills and "lake" in tech_skills:
-        tech_skills.append("datalake")
+        tech_skills.append("Datalake")
         tech_skills.remove("lake")
     return tech_skills
 
 def regroup_soft_skills(soft_skills):
     if "resolution" in soft_skills and "probleme" in soft_skills:
-        soft_skills.append("resolution de problemes")
+        soft_skills.append("Resolution de problemes")
         soft_skills.remove("resolution")
         soft_skills.remove("probleme")
     if "esprit" in soft_skills and "equipe" in soft_skills:
-        soft_skills.append("esprit d'equipe")
+        soft_skills.append("Esprit d'equipe")
         soft_skills.remove("equipe")
     if "esprit" in soft_skills and "critique" in soft_skills:
-        soft_skills.append("esprit critique")
+        soft_skills.append("Esprit critique")
         soft_skills.remove("critique")
     if "confiance" in soft_skills and "soi" in soft_skills:
-        soft_skills.append("confiance en soi")
+        soft_skills.append("Confiance en soi")
         soft_skills.remove("confiance")
         soft_skills.remove("soi")
     if "gestion" in soft_skills and "temps" in soft_skills:
-        soft_skills.append("gestion du temps")
+        soft_skills.append("Gestion du temps")
         soft_skills.remove("gestion")
         soft_skills.remove("temps")
     if "esprit" in soft_skills:
@@ -832,16 +885,30 @@ def regroup_soft_skills(soft_skills):
         soft_skills.remove("gestion")
     return soft_skills
 
+def extract_skills(df):
+    logging.info("Extracting Skills from description...")
+    if "description" in df.columns:
+        df.dropna(subset="description", inplace = True)
+        df = clean_description(df)
+        df["tech_skills"] = df["description_cleaned"].apply(extract_tech_skills)
+        df["soft_skills"] = df["description_cleaned"].apply(extract_soft_skills)
+        df.drop("description_cleaned", axis=1, inplace=True)
+        logging.info("Skills extracted!")
+    else:
+        logging.info("""
+                     The dataframe does not have a description
+                     to extract skills from.
+                     """)
+
+    return df
+
 
 # SQL
 def create_sql_table(df):
     df['tech_skills'] = df['tech_skills'].apply(json.dumps)
-    df['soft_skills'] = df['soft_skills'].apply(json.dumps) 
+    df['soft_skills'] = df['soft_skills'].apply(json.dumps)
     engine = sqlalchemy.create_engine('sqlite:///database/job_offers.sqlite')
     df.to_sql('all_jobs', con=engine, index=False, if_exists='replace')
-
-
-
 
 # def create_sql_table(
 #         source: str,
