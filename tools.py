@@ -349,9 +349,10 @@ def global_clean_wttj(df_to_clean):
         ).str.replace("vie", "CDI"
     )
     df["niveau_etudes"] = df["niveau_etudes"].astype(str)
-    df["niveau_etudes"] = df["niveau_etudes"].apply(clean_experience)
-
+    df["niveau_etudes"] = df["niveau_etudes"].apply(clean_niveau_etude)
     df["secteur_activite"] = df["secteur_activite"].apply(clean_secteur_activite)
+    df["experience"] = df["experience"].apply(clean_experience)
+
 
     return df
 
@@ -442,7 +443,7 @@ def clean_dict_columns(
     plusieurs colonnes.
     '''
     dict_cols = [
-        ("lieuTravail", ["latitude", "longitude", "commune"]),
+        ("lieuTravail", ["commune"]),
         ("entreprise", ["entrepriseAdaptee", "url"]),
         ("salaire", ["complement1", "complement2", "commentaire"]),
         ("formations", ["codeFormation", "domaineLibelle", "exigence", "commentaire"]),
@@ -505,12 +506,13 @@ def global_clean_pe(df_to_clean):
     df = rename_and_reorder_cols("pole emploi", df_to_clean)
     # Cleaning remaining columns
     df["niveau_etudes"] = df["niveau_etudes"].astype(str)
-    df["niveau_etudes"] = df["niveau_etudes"].apply(clean_experience)
+    df["niveau_etudes"] = df["niveau_etudes"].apply(clean_niveau_etude)
     df["ville"] = df["ville"].str.title().str.replace(r"\d+", "", regex=True).str.replace("-", "").str.strip()
     df["contrat"] = df["contrat"].str.replace("MIS", "Interim").str.replace("FRA", "Autre").str.replace("LIB", "Autre")
     df[df["salaire"].isna()] = None
     df["salaire"] = df["salaire"].apply(clean_salaire_pe)
     df["secteur_activite"] = df["secteur_activite"].apply(clean_secteur_activite)
+    df["experience"] = df["experience"].apply(clean_experience)
 
     return df
 
@@ -531,7 +533,7 @@ def clean_html(text):
     cleaned_text = cleaned_text.replace("\xa0", " ").replace("\n", "")
     return cleaned_text
 
-def clean_experience(text) -> str:
+def clean_niveau_etude(text) -> str:
     '''
     Nettoie la colonne "niveau_etudes".
     '''
@@ -552,7 +554,9 @@ def clean_date(
     ):
     if "date_publication" in df.columns:
         df["date_publication"] = pd.to_datetime(df["date_publication"])
-        df["date_publication"] = df["date_publication"].dt.strftime("%Y-%m-%d")
+        df["date_modif"] = pd.to_datetime(df["date_modif"])
+
+        # df["date_publication"] = df["date_publication"].dt.strftime("%Y-%m-%d")
     return df
 
 def clean_salaire_pe(text):
@@ -616,6 +620,28 @@ def clean_secteur_activite(text):
     else:
         return text
 
+def clean_experience(text):
+    if text == None or text == 'Débutant accepté (0 YEAR)':
+        text = "Débutant accepté"
+    elif text == '6_MONTHS_TO_1_YEAR':
+        text = "6 mois à 1 an"
+    elif text == 'Expérience exigée de 1 An(s)':
+        text = "1 an"
+    elif text == '1_TO_2_YEARS':
+        text = "1 à 2 ans"
+    elif text == 'Expérience exigée de 2 An(s)' or text == '24 mois':
+        text = "2 ans"
+    elif text == 'Expérience exigée de 3 An(s)' or text == 'Expérience souhaitée de 3 An(s)':
+        text = "3 ans"
+    elif text == '5 ans - DATA ANALYST':
+        text = "5 ans"
+    elif text == '5 ans - 5 ans minimum' or text == 'Expérience exigée de 5 An(s)':
+        text = "5 ans"
+    elif text == 'Expérience exigée' or text == 'Expérience souhaitée':
+        text = "Non spécifié"
+
+    return text
+
 
 # Reordering/renaming
 def create_cols_to_keep(
@@ -648,6 +674,9 @@ def create_cols_to_keep(
         "salary_min",                   # salaire(2)
         "salary_max",                   # salaire(3)
         "experience_level",             # experience
+        "updated_at",                   # date_modif
+        "office.latitude",              # latitude
+        "office.longitude",             # longitude
     ]
     if site == "pole emploi":
         cols = [
@@ -664,6 +693,9 @@ def create_cols_to_keep(
                 "urlOrigine",               # link
                 "logo",                     # logo
                 "experienceLibelle",        # experience
+                "dateActualisation",        # date_modif
+                "latitude",                 # latitude
+                "longitude",                # longitude
             ]
     cols_to_keep = [col for col in cols if col in df.columns]
     return cols_to_keep
@@ -697,6 +729,9 @@ def rename_and_reorder_cols(
             'office.city' : 'ville',
             'organization.logo.url' : 'logo',
             'experience_level' : 'experience',
+            'updated_at' : 'date_modif',
+            'office.latitude' : 'latitude',
+            'office.longitude' : 'longitude',
             }, axis = 1, inplace = True
         )
 
@@ -712,7 +747,8 @@ def rename_and_reorder_cols(
                     'niveauLibelle' : 'niveau_etudes',
                     'libelle' : 'salaire',
                     'nom' : 'entreprise',
-                    "experienceLibelle" : "experience",
+                    'experienceLibelle' : 'experience',
+                    'dateActualisation' : 'date_modif',
                 }, axis = 1, inplace = True
             )
     liste_cols = reorder_cols()
@@ -744,6 +780,9 @@ def reorder_cols(
         "ville",
         "link",
         "logo",
+        "date_modif",
+        "latitude",
+        "longitude",
     ]
     return liste_cols
 
