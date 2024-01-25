@@ -118,7 +118,6 @@ def scrapping(job_title: str, page : int = None):
         df = df.drop_duplicates(subset="description", keep="first")
         df = extract_skills(df)
         df = clean_nan(df)
-        # df["secteur_activite"] = df["secteur_activite"].apply(clean_secteur_activite)
         logging.info("Saving .parquet file...")
         df.to_parquet(f'datasets/all_jobs.parquet', index=False)
         logging.info("Updating .sqlite DB...")
@@ -132,7 +131,6 @@ def scrapping(job_title: str, page : int = None):
         df_wttj = clean_date(df_wttj)
         df_wttj = extract_skills(df_wttj)
         df_wttj = clean_nan(df_wttj)
-        # df_wttj["secteur_activite"] = df_wttj["secteur_activite"].apply(clean_secteur_activite)
         logging.info(f"Saving WTTJ_{job_title_nom_fichier}.parquet...")
         df_wttj.to_parquet(
             f'datasets/WTTJ_{job_title_nom_fichier}.parquet', index=False
@@ -150,7 +148,7 @@ def scrapping(job_title: str, page : int = None):
         df_pole_emploi = clean_date(df_pole_emploi)
         df_pole_emploi = extract_skills(df_pole_emploi)
         df_pole_emploi = clean_nan(df_pole_emploi)
-        # df_pole_emploi["secteur_activite"] = df_pole_emploi["secteur_activite"].apply(clean_secteur_activite)
+
         logging.info(f"Saving pole_emploi_{job_title_nom_fichier}.parquet...")
         df_pole_emploi.to_parquet(
             f'datasets/pole_emploi_{job_title_nom_fichier}.parquet', index=False
@@ -265,26 +263,6 @@ async def fetch_all(
 
     df = global_clean_wttj(full_df)
     logging.info("Welcome To The Jungle DataFrame done!")
-
-    # df["description"] = df["description"].apply(clean_html)
-    # df["organization.description"] = df["organization.description"].apply(clean_html)
-    # df[df["salary_period"].isna()] = None
-    # df[df["salary_max"].isna()] = None
-    # df[df["salary_min"].isna()] = None
-    # df["salaire"] = df.apply(lambda row: clean_salaire_wttj(
-    #     row["salary_period"], row["salary_max"], row["salary_min"]
-    # ), axis = 1)
-    # df = rename_and_reorder_cols("wttj", df)
-    # df["niveau_etudes"] = df["niveau_etudes"].astype(str)
-    # df["niveau_etudes"] = df["niveau_etudes"].apply(clean_experience)
-    # df["contrat"] = df["contrat"].str.replace(
-    #     "full_time", "CDI"
-    #     ).str.replace("internship", "Stage"
-    #     ).str.replace("apprenticeship", "Alternance"
-    #     ).str.replace("temporary", "CDD"
-    #     ).str.replace("other", "Autre"
-    #     ).str.replace("vie", "CDI"
-    # )
     return df
 
 async def fetch(
@@ -356,7 +334,6 @@ def global_clean_wttj(df_to_clean):
     df["secteur_activite"] = df["secteur_activite"].apply(clean_secteur_activite)
     df["experience"] = df["experience"].apply(clean_experience)
 
-
     return df
 
 
@@ -382,7 +359,6 @@ def job_offers_pole_emploi(
     client_id = os.getenv('USER_POLE_EMPLOI')
     api_key = os.getenv('API_KEY_POLE_EMPLOI')
     # Initialisation des variables locales
-    # cols_to_keep = create_cols_to_keep('pole emploi')
     results = []
     start_range = 0
     max_results = float('inf')
@@ -411,19 +387,6 @@ def job_offers_pole_emploi(
         df_emploi = pd.DataFrame(results)
         df_final = global_clean_pe(df_emploi)
         logging.info("Pole Emploi DataFrame done!")
-
-        # df_final = clean_dict_columns(df_emploi)
-        # cols_to_drop = [col for col in df_final.columns if col not in cols_to_keep]
-        # df_final.drop(cols_to_drop, axis=1, inplace=True)
-        # df_final = rename_and_reorder_cols("pole emploi", df_final)
-
-        # df_final["description"] = df_final["description"].apply(clean_html)
-        # df_final["niveau_etudes"] = df_final["niveau_etudes"].astype(str)
-        # df_final["niveau_etudes"] = df_final["niveau_etudes"].apply(clean_experience)
-        # df_final["ville"] = df_final["ville"].str.title().str.replace(r"\d+", "", regex=True).str.replace("-", "").str.strip()
-        # df_final["contrat"] = df_final["contrat"].str.replace("MIS", "Interim").str.replace("FRA", "Autre").str.replace("LIB", "Autre")
-        # df_final[df_final["salaire"].isna()] = None
-        # df_final["salaire"] = df_final["salaire"].apply(clean_salaire_pe)
         return df_final
     else:
         print("Aucune offre d'emploi trouvée.")
@@ -560,7 +523,6 @@ def clean_date(
         df["date_publication"] = pd.to_datetime(df["date_publication"])
         df["date_modif"] = pd.to_datetime(df["date_modif"])
 
-        # df["date_publication"] = df["date_publication"].dt.strftime("%Y-%m-%d")
     return df
 
 def clean_salaire_pe(text):
@@ -994,7 +956,6 @@ def extract_skills(df):
         df["tech_skills"] = df["description_cleaned"].apply(extract_tech_skills)
         df["soft_skills"] = df["description_cleaned"].apply(extract_soft_skills)
         df.drop("description_cleaned", axis=1, inplace=True)
-        # df["tech_skills"] = df["tech_skills"].apply(clean_tech_skills)
         logging.info("Skills extracted!")
     else:
         logging.info("""
