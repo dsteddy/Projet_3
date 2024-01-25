@@ -752,7 +752,8 @@ def rename_and_reorder_cols(
                 }, axis = 1, inplace = True
             )
     liste_cols = reorder_cols()
-    df = df[liste_cols]
+    cols_ordered = [col for col in liste_cols if col in df.columns]
+    df = df[cols_ordered]
     return df
 
 def reorder_cols(
@@ -794,11 +795,13 @@ def tech_skills_list():
         'flask',
         'pandas',
         'spark',
+        'pyspark',
         'scikit-learn',
         'numpy',
         'sql',
         'mysql',
         'nltk',
+        'nlp',
         'fastapi',
         'pytorch',
         'snowflake',
@@ -822,7 +825,6 @@ def tech_skills_list():
         'iku',
         'r',
         'datalake',
-        'lake',
         'lake',
         'data',
         'ml',
@@ -897,6 +899,8 @@ def regroup_tech_skills(tech_skills):
     if "data" in tech_skills and "lake" in tech_skills:
         tech_skills.append("Datalake")
         tech_skills.remove("lake")
+    if "data" in tech_skills:
+        tech_skills.remove("data")
     return tech_skills
 
 def regroup_soft_skills(soft_skills):
