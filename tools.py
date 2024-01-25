@@ -117,6 +117,7 @@ def scrapping(job_title: str, page : int = None):
         logging.info("Dropping duplicates...")
         df = df.drop_duplicates(subset="description", keep="first")
         df = extract_skills(df)
+        df = clean_nan(df)
         # df["secteur_activite"] = df["secteur_activite"].apply(clean_secteur_activite)
         logging.info("Saving .parquet file...")
         df.to_parquet(f'datasets/all_jobs.parquet', index=False)
@@ -130,6 +131,7 @@ def scrapping(job_title: str, page : int = None):
         df_wttj = job_offers_wttj(job_title, page)
         df_wttj = clean_date(df_wttj)
         df_wttj = extract_skills(df_wttj)
+        df_wttj = clean_nan(df_wttj)
         # df_wttj["secteur_activite"] = df_wttj["secteur_activite"].apply(clean_secteur_activite)
         logging.info(f"Saving WTTJ_{job_title_nom_fichier}.parquet...")
         df_wttj.to_parquet(
@@ -147,6 +149,7 @@ def scrapping(job_title: str, page : int = None):
         df_pole_emploi = job_offers_pole_emploi(params)
         df_pole_emploi = clean_date(df_pole_emploi)
         df_pole_emploi = extract_skills(df_pole_emploi)
+        df_pole_emploi = clean_nan(df_pole_emploi)
         # df_pole_emploi["secteur_activite"] = df_pole_emploi["secteur_activite"].apply(clean_secteur_activite)
         logging.info(f"Saving pole_emploi_{job_title_nom_fichier}.parquet...")
         df_pole_emploi.to_parquet(
@@ -516,6 +519,7 @@ def global_clean_pe(df_to_clean):
 
     return df
 
+
 # Data Cleaning
 def clean_html(text):
     '''
@@ -641,6 +645,18 @@ def clean_experience(text):
         text = "Non spécifié"
 
     return text
+
+def clean_nan(df):
+    df.dropna(subset="entreprise", axis = 0, inplace = True)
+    df.dropna(subset="latitude", axis = 0, inplace = True)
+    df.fillna(
+        {
+            "logo" : "",
+            "description_entreprise" : "Aucune information",
+            "secteur_activite" : "Non spécifié"
+    }, inplace=True
+    )
+    return df
 
 
 # Reordering/renaming
@@ -885,23 +901,65 @@ def extract_soft_skills(description):
     return extracted_skills
 
 def regroup_tech_skills(tech_skills):
-    if "machine" in tech_skills and "learning" in tech_skills:
-        tech_skills.append("Machine Learning")
-        tech_skills.remove("machine")
-        tech_skills.remove("learning")
-    if "power" in tech_skills and "bi" in tech_skills:
-        tech_skills.append("Power BI")
-        tech_skills.remove("power")
-        tech_skills.remove("bi")
-    if "data" in tech_skills and "iku" in tech_skills:
-        tech_skills.append("Dataiku")
-        tech_skills.remove("iku")
-    if "data" in tech_skills and "lake" in tech_skills:
-        tech_skills.append("Datalake")
-        tech_skills.remove("lake")
-    if "data" in tech_skills:
-        tech_skills.remove("data")
-    return tech_skills
+    tech_skills = [skill.title() for skill in tech_skills]
+
+    if "Sql" in tech_skills:
+        index = tech_skills.index("Sql")
+        tech_skills[index] = "SQL"
+    if "Api" in tech_skills:
+        index = tech_skills.index("Api")
+        tech_skills[index] = "API"
+    if "Aws" in tech_skills:
+        index = tech_skills.index("Aws")
+        tech_skills[index] = "AWS"
+    if "Nlp" in tech_skills:
+        index = tech_skills.index("Nlp")
+        tech_skills[index] = "NLP"
+    if "Dbt" in tech_skills:
+        index = tech_skills.index("Dbt")
+        tech_skills[index] = "DBT"
+    if "Mysql" in tech_skills:
+        index = tech_skills.index("Mysql")
+        tech_skills[index] = "MySQL"
+    if "Ml" in tech_skills:
+        index = tech_skills.index("Ml")
+        tech_skills[index] = "Machine Learning"
+    if "Pyspark" in tech_skills:
+        index = tech_skills.index("Pyspark")
+        tech_skills[index] = "PySpark"
+    if "Machine" in tech_skills and "Learning" in tech_skills:
+        index = tech_skills.index("Machine")
+        tech_skills[index] = "Machine Learning"
+        tech_skills.remove("Learning")
+    if "Power" in tech_skills and "Bi" in tech_skills:
+        index = tech_skills.index("Power")
+        tech_skills[index] = "PowerBI"
+        tech_skills.remove("Bi")
+    if "Data" in tech_skills and "Iku" in tech_skills:
+        index = tech_skills.index("iku")
+        tech_skills[index] = "Dataiku"
+    if "Data" in tech_skills and "Lake" in tech_skills:
+        index = tech_skills.index("Lake")
+        tech_skills[index] = "Datalake"
+    if "Data" in tech_skills:
+        tech_skills.remove("Data")
+    if "Ia" in tech_skills or "Ai" in tech_skills:
+        tech_skills.append("IA")
+        try:
+            tech_skills.remove("Ia")
+        except:
+            pass
+        try:
+            tech_skills.remove("Ai")
+        except:
+            pass
+    if "Bi" in tech_skills:
+        tech_skills.append("BI")
+        tech_skills.remove("Bi")
+
+    tech_skills = set(tech_skills)
+
+    return list(tech_skills)
 
 def regroup_soft_skills(soft_skills):
     if "resolution" in soft_skills and "probleme" in soft_skills:
@@ -936,6 +994,7 @@ def extract_skills(df):
         df["tech_skills"] = df["description_cleaned"].apply(extract_tech_skills)
         df["soft_skills"] = df["description_cleaned"].apply(extract_soft_skills)
         df.drop("description_cleaned", axis=1, inplace=True)
+        # df["tech_skills"] = df["tech_skills"].apply(clean_tech_skills)
         logging.info("Skills extracted!")
     else:
         logging.info("""
