@@ -10,3 +10,8 @@
 /__pycache__/
 
 /venv
+
+assets/
+
+zapp.py
+tools_app.py

@@ -118,6 +118,7 @@ def scrapping(job_title: str, page : int = None):
         df = df.drop_duplicates(subset="description", keep="first")
         df = extract_skills(df)
         df = clean_nan(df)
+        df["ville"] = df["ville"].apply(clean_ville)
         logging.info("Saving .parquet file...")
         df.to_parquet(f'datasets/all_jobs.parquet', index=False)
         logging.info("Updating .sqlite DB...")
@@ -514,7 +515,7 @@ def clean_niveau_etude(text) -> str:
     if "bac+2" in text or "bac_2" in text:
         return "Bac +2"
     else:
-        return "Aucune information"
+        return "Non spécifié"
 
 def clean_date(
         df: pd.DataFrame,
@@ -587,23 +588,54 @@ def clean_secteur_activite(text):
         return text
 
 def clean_experience(text):
-    if text == None or text == 'Débutant accepté (0 YEAR)':
+    if text == None or text in [
+        'Débutant accepté (0 YEAR)',
+        'LESS_THAN_6_MONTHS'
+    ]:
         text = "Débutant accepté"
     elif text == '6_MONTHS_TO_1_YEAR':
-        text = "6 mois à 1 an"
-    elif text == 'Expérience exigée de 1 An(s)':
+        text = "6 mois"
+    elif text in [
+        'Expérience exigée de 1 An(s)',
+        '1_TO_2_YEARS'
+    ]:
         text = "1 an"
-    elif text == '1_TO_2_YEARS':
-        text = "1 à 2 ans"
-    elif text == 'Expérience exigée de 2 An(s)' or text == '24 mois':
+    elif text in [
+        'Expérience exigée de 2 An(s)',
+        '24 mois',
+        '2_TO_3_YEARS'
+    ]:
         text = "2 ans"
-    elif text == 'Expérience exigée de 3 An(s)' or text == 'Expérience souhaitée de 3 An(s)':
+    elif text in [
+        'Expérience exigée de 3 An(s)',
+        'Expérience souhaitée de 3 An(s)',
+        '3_TO_4_YEARS',
+        '36 mois'
+    ]:
         text = "3 ans"
-    elif text == '5 ans - DATA ANALYST':
+    elif text in [
+        '4_TO_5_YEARS',
+        'Expérience exigée de 4 An(s)'
+    ]:
+        text = "4 ans"
+    elif text in [
+        '5 ans - DATA ANALYST',
+        '5 ans - 5 ans minimum',
+        'Expérience exigée de 5 An(s)',
+        '5_TO_7_YEARS',
+    ]:
         text = "5 ans"
-    elif text == '5 ans - 5 ans minimum' or text == 'Expérience exigée de 5 An(s)':
-        text = "5 ans"
-    elif text == 'Expérience exigée' or text == 'Expérience souhaitée':
+    elif text in [
+        'Expérience exigée de 6 An(s)',
+        '7_TO_10_YEARS',
+    ]:
+        text = "+5 ans"
+    elif text == '10_TO_15_YEARS':
+        text = "10 ans"
+    elif text in [
+        'Expérience exigée',
+        'Expérience souhaitée',
+    ]:
         text = "Non spécifié"
 
     return text
@@ -619,6 +651,12 @@ def clean_nan(df):
     }, inplace=True
     )
     return df
+
+def clean_ville(text):
+    text.replace("-", " ")
+    text.lower()
+    text.title()
+    return text
 
 
 # Reordering/renaming
