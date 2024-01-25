@@ -973,6 +973,7 @@ def create_sql_table(df):
     engine = sqlalchemy.create_engine('sqlite:///database/job_offers.sqlite')
     df.to_sql('all_jobs', con=engine, index=False, if_exists='replace')
 
+
 # def create_sql_table(
 #         source: str,
 #         df: pd.DataFrame,
