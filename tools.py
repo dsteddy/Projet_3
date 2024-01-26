@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.firefox.service import Service
+from webdriver_manager.firefox import GeckoDriverManager
 
 import nltk
 from nltk.corpus import stopwords
@@ -74,13 +76,7 @@ def scrapping(job_title: str, page : int = None):
         wttj_engineer = job_offers_wttj("data+engineer")
         wttj_engineer = clean_date(wttj_engineer)
 
-        params = {
-            "motsCles": "data engineer",
-            'minCreationDate': dt_to_str_iso(datetime.datetime(
-                2023, 9, 1, 12, 30
-            )),
-            'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
-        }
+        params["motsCles"] = "data engineer",
         pe_engineer = job_offers_pole_emploi(params)
         pe_engineer = clean_date(pe_engineer)
 
@@ -90,13 +86,7 @@ def scrapping(job_title: str, page : int = None):
         wttj_scientist = job_offers_wttj("data+scientist")
         wttj_scientist = clean_date(wttj_scientist)
 
-        params = {
-            "motsCles": "data scientist",
-            'minCreationDate': dt_to_str_iso(datetime.datetime(
-                2023, 9, 1, 12, 30
-            )),
-            'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
-        }
+        params["motsCles"] = "data scientist",
         pe_scientist = job_offers_pole_emploi(params)
         pe_scientist = clean_date(pe_scientist)
 
@@ -115,7 +105,7 @@ def scrapping(job_title: str, page : int = None):
             ignore_index=True
         )
         logging.info("Dropping duplicates...")
-        df = df.drop_duplicates(subset="description", keep="first")
+        df = df.drop_duplicates(subset="id", keep="first")
         df = extract_skills(df)
         df = clean_nan(df)
         df["ville"] = df["ville"].apply(clean_ville)
@@ -190,6 +180,7 @@ def job_offers_wttj(
     options.add_argument("--headless")
     driver = webdriver.Firefox(
         options=options,
+        service=Service(GeckoDriverManager().install()),
         )
     # Ouverture de la première page.
     if page == None:
@@ -254,13 +245,18 @@ async def fetch_all(
     df: pd.DataFrame : dataframe avec les colonnes nettoyées.
     '''
     logging.info("API requests...")
+    tasks = []
     async with aiohttp.ClientSession() as session:
-        tasks = [fetch(session, link) for link in api_links]
+        for link in api_links:
+            task = asyncio.create_task(fetch(session, link))
+            tasks.append(task)
+            await asyncio.sleep(0.07)
+            # tasks = [fetch(session, link) for link in api_links]
         responses = await asyncio.gather(*tasks)
-    logging.info("API requests done!")
+        logging.info("API requests done!")
 
-    logging.info("Creating dataframe...")
-    full_df = pd.concat([pd.json_normalize(resp["job"]) for resp in responses if "job" in resp], ignore_index=True)
+        logging.info("Creating dataframe...")
+        full_df = pd.concat([pd.json_normalize(resp["job"]) for resp in responses if "job" in resp], ignore_index=True)
 
     df = global_clean_wttj(full_df)
     logging.info("Welcome To The Jungle DataFrame done!")
@@ -313,9 +309,13 @@ def global_clean_wttj(df_to_clean):
     # Cleaning all remaining columns
     df["description"] = df["description"].apply(clean_html)
     df["organization.description"] = df["organization.description"].apply(clean_html)
-    df[df["salary_period"].isna()] = None
-    df[df["salary_max"].isna()] = None
-    df[df["salary_min"].isna()] = None
+    # df.fillna(
+    #     {
+    #         "salary_period" : None,
+    #         "salary_max" : None,
+    #         "salary_min" : None
+    # }, inplace=True
+    # )
     df["salaire"] = df.apply(lambda row: clean_salaire_wttj(
         row["salary_period"], row["salary_max"], row["salary_min"]
     ), axis = 1)
@@ -527,7 +527,7 @@ def clean_date(
     return df
 
 def clean_salaire_pe(text):
-    if text is not None:
+    if text:
         if "Annuel" in text:
             matches = re.findall(r'\d+,\d+', text)
             if matches:
@@ -559,9 +559,9 @@ def clean_salaire_pe(text):
     return f'Salaire non indiqué'
 
 def clean_salaire_wttj(salary_period, salary_max, salary_min):
-    if salary_period is not None:
+    if salary_period:
         if salary_period == "yearly":
-            if salary_max is not None and salary_min is not None:
+            if salary_max and salary_min:
                 salary = (salary_max + salary_min) / 2
                 if salary < 100:
                     salary *= 1000
@@ -569,7 +569,7 @@ def clean_salaire_wttj(salary_period, salary_max, salary_min):
             else:
                 return f'Salaire non indiqué'
         elif salary_period == "monthly":
-            if salary_max is not None and salary_min is not None:
+            if salary_max and salary_min:
                 monthly_max = salary_max * 12
                 monthly_min = salary_min * 12
                 monthly_salary = (monthly_max + monthly_min) / 2
@@ -653,9 +653,9 @@ def clean_nan(df):
     return df
 
 def clean_ville(text):
-    text.replace("-", " ")
-    text.lower()
-    text.title()
+    text = text.replace("-", " ").replace("'", " ")
+    text = text.lower()
+    text = text.title()
     return text
 
 
@@ -693,6 +693,7 @@ def create_cols_to_keep(
         "updated_at",                   # date_modif
         "office.latitude",              # latitude
         "office.longitude",             # longitude
+        "reference",                         # id
     ]
     if site == "pole emploi":
         cols = [
@@ -712,6 +713,7 @@ def create_cols_to_keep(
                 "dateActualisation",        # date_modif
                 "latitude",                 # latitude
                 "longitude",                # longitude
+                "id",                       # id
             ]
     cols_to_keep = [col for col in cols if col in df.columns]
     return cols_to_keep
@@ -748,6 +750,7 @@ def rename_and_reorder_cols(
             'updated_at' : 'date_modif',
             'office.latitude' : 'latitude',
             'office.longitude' : 'longitude',
+            'reference' : 'id',
             }, axis = 1, inplace = True
         )
 
@@ -784,6 +787,7 @@ def reorder_cols(
     liste_cols: list: Liste contenant les colonnes dans l'ordre défini.
     '''
     liste_cols = [
+        "id",
         "date_publication",
         "contrat",
         "intitule",
@@ -935,6 +939,9 @@ def regroup_tech_skills(tech_skills):
         index = tech_skills.index("Power")
         tech_skills[index] = "PowerBI"
         tech_skills.remove("Bi")
+    if "Powerbi" in tech_skills:
+        index = tech_skills.index("Powerbi")
+        tech_skills[index] = "PowerBI"
     if "Data" in tech_skills and "Iku" in tech_skills:
         index = tech_skills.index("iku")
         tech_skills[index] = "Dataiku"
