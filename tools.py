@@ -60,6 +60,7 @@ def scrapping(job_title: str, page : int = None):
         logging.info("Getting Data Analyst offers...")
         wttj_analyst = job_offers_wttj("data+analyst")
         wttj_analyst = clean_date(wttj_analyst)
+        wttj_analyst["metier"] = "Data Analyst"
 
         params = {
             "motsCles": "data analyst",
@@ -70,27 +71,31 @@ def scrapping(job_title: str, page : int = None):
         }
         pe_analyst = job_offers_pole_emploi(params)
         pe_analyst = clean_date(pe_analyst)
+        pe_analyst["metier"] = "Data Analyst"
 
         # Data Engineer
         logging.info("------------------------------")
         logging.info("Getting Data Engineer offers...")
         wttj_engineer = job_offers_wttj("data+engineer")
         wttj_engineer = clean_date(wttj_engineer)
+        wttj_engineer["metier"] = "Data Engineer"
 
         params["motsCles"] = "data engineer",
         pe_engineer = job_offers_pole_emploi(params)
         pe_engineer = clean_date(pe_engineer)
+        pe_engineer["metier"] = "Data Engineer"
 
         # Data Scientist
         logging.info("------------------------------")
         logging.info("Getting Data Scientist offers...")
         wttj_scientist = job_offers_wttj("data+scientist")
         wttj_scientist = clean_date(wttj_scientist)
+        wttj_scientist["metier"] = "Data Scientist"
 
         params["motsCles"] = "data scientist",
         pe_scientist = job_offers_pole_emploi(params)
         pe_scientist = clean_date(pe_scientist)
-
+        pe_scientist["metier"] = "Data Scientist"
 
         # Concat all
         logging.info("Regrouping dataframes...")
@@ -110,8 +115,6 @@ def scrapping(job_title: str, page : int = None):
         df = extract_skills(df)
         df = clean_nan(df)
         df["ville"] = df["ville"].apply(clean_ville)
-        # df = calculate_days(df)
-        # df["days_since"] = df["days_since"].apply(cat_date)
         logging.info("Saving .parquet file...")
         df.to_parquet(f'datasets/all_jobs.parquet', index=False)
         logging.info("Updating .sqlite DB...")
@@ -192,7 +195,7 @@ def job_offers_wttj(
         try:
             # Récupère le numéro de la dernière page.
             logging.info("Checking page numbers...")
-            page_numbers = WebDriverWait(driver, 20).until(
+            page_numbers = WebDriverWait(driver, 10).until(
                 EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".sc-ezreuY.gGgoDq"))
             )
             page_max = int(page_numbers[-1].text)
@@ -209,7 +212,7 @@ def job_offers_wttj(
             driver.get(url)
             try:
                 # Récupère le lien de chaque offre d'emploi sur la page.
-                contents = WebDriverWait(driver, 30).until(
+                contents = WebDriverWait(driver, 50).until(
                     EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".sc-6i2fyx-0.gIvJqh"))
                 )
                 for content in contents:
@@ -332,6 +335,8 @@ def global_clean_wttj(df_to_clean):
         ).str.replace("temporary", "CDD"
         ).str.replace("other", "Autre"
         ).str.replace("vie", "CDI"
+        ).str.replace("freelance", "Freelance"
+        ).str.replace("part_time", "CDI"
     )
     df["niveau_etudes"] = df["niveau_etudes"].astype(str)
     df["niveau_etudes"] = df["niveau_etudes"].apply(clean_niveau_etude)
@@ -660,25 +665,6 @@ def clean_ville(text):
     text = text.lower()
     text = text.title()
     return text
-
-def calculate_days(df):
-    today = datetime.now().replace(tzinfo=None)
-    if "date_publication" in df.columns:
-        df["date_publication"] = pd.to_datetime(df["date_publication"].dt.tz_localize(None))
-        df["days_since"] = (today - all["date_publication"]).dt.days
-    return df
-
-def cat_date(date):
-    if date == 0:
-        return "Aujourd'hui"
-    elif date == 1:
-        return "Hier"
-    elif date <= 7:
-        return "< 1 semaine"
-    elif date <= 31:
-        return "< 1 mois"
-    else:
-        return "1 mois ou plus"
 
 
 # Reordering/renaming
