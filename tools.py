@@ -19,7 +19,8 @@ import json
 import sqlalchemy
 
 from offres_emploi import Api
-import datetime
+# import datetime
+from datetime import datetime
 
 import re
 
@@ -62,10 +63,10 @@ def scrapping(job_title: str, page : int = None):
 
         params = {
             "motsCles": "data analyst",
-            'minCreationDate': dt_to_str_iso(datetime.datetime(
-                2023, 12, 1, 12, 30
-            )),
-            'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
+            # 'minCreationDate': dt_to_str_iso(datetime.datetime(
+            #     2023, 12, 1, 12, 30
+            # )),
+            # 'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
         }
         pe_analyst = job_offers_pole_emploi(params)
         pe_analyst = clean_date(pe_analyst)
@@ -109,6 +110,8 @@ def scrapping(job_title: str, page : int = None):
         df = extract_skills(df)
         df = clean_nan(df)
         df["ville"] = df["ville"].apply(clean_ville)
+        # df = calculate_days(df)
+        # df["days_since"] = df["days_since"].apply(cat_date)
         logging.info("Saving .parquet file...")
         df.to_parquet(f'datasets/all_jobs.parquet', index=False)
         logging.info("Updating .sqlite DB...")
@@ -130,10 +133,10 @@ def scrapping(job_title: str, page : int = None):
         # Pole Emploi
         params = {
             "motsCles": "data analyst",
-            'minCreationDate': dt_to_str_iso(datetime.datetime(
-                2023, 9, 1, 12, 30
-            )),
-            'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
+            # 'minCreationDate': dt_to_str_iso(datetime.datetime(
+            #     2023, 9, 1, 12, 30
+            # )),
+            # 'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
         }
         df_pole_emploi = job_offers_pole_emploi(params)
         df_pole_emploi = clean_date(df_pole_emploi)
@@ -189,7 +192,7 @@ def job_offers_wttj(
         try:
             # Récupère le numéro de la dernière page.
             logging.info("Checking page numbers...")
-            page_numbers = WebDriverWait(driver, 10).until(
+            page_numbers = WebDriverWait(driver, 20).until(
                 EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".sc-ezreuY.gGgoDq"))
             )
             page_max = int(page_numbers[-1].text)
@@ -533,29 +536,29 @@ def clean_salaire_pe(text):
             if matches:
                 salaries = [float(match.replace(',', '.')) for match in matches]
                 average_salary = sum(salaries) / len(salaries)
-                if "13 mois" in text:
-                    months = "13 mois"
-                else:
-                    months = "12 mois"
-                return f'{int(average_salary)} sur {months}'
+                # if "13 mois" in text:
+                #     months = "13 mois"
+                # else:
+                #     months = "12 mois"
+                return f'{int(average_salary)}'
         elif "Mensuel" in text:
             matches = re.findall(r'\d+,\d+', text)
             if matches:
                 monthly_salaries = [float(match.replace(',', '.')) for match in matches]
                 average_salary = sum(monthly_salaries) / len(monthly_salaries)
                 average_annual_salary = average_salary * 12
-                if "13 mois" in text:
-                    months = "13 mois"
-                else:
-                    months = "12 mois"
-                return f'{int(average_annual_salary)} sur {months}'
+                # if "13 mois" in text:
+                #     months = "13 mois"
+                # else:
+                #     months = "12 mois"
+                return f'{int(average_annual_salary)}'
         elif "Horaire" in text:
             matches = re.findall(r'\d+,\d+', text)
             if matches:
                 hourly_salaries = [float(match.replace(',', '.')) for match in matches]
                 average_salary = sum(hourly_salaries) / len(hourly_salaries)
                 average_annual_salary = average_salary * 35 * 52
-                return f'{int(average_annual_salary)} sur 12 mois'
+                return f'{int(average_annual_salary)}'
     return f'Salaire non indiqué'
 
 def clean_salaire_wttj(salary_period, salary_max, salary_min):
@@ -565,7 +568,7 @@ def clean_salaire_wttj(salary_period, salary_max, salary_min):
                 salary = (salary_max + salary_min) / 2
                 if salary < 100:
                     salary *= 1000
-                return f'{int(salary)} sur 12 mois'
+                return f'{int(salary)}'
             else:
                 return f'Salaire non indiqué'
         elif salary_period == "monthly":
@@ -575,7 +578,7 @@ def clean_salaire_wttj(salary_period, salary_max, salary_min):
                 monthly_salary = (monthly_max + monthly_min) / 2
                 if monthly_salary < 100:
                     salary *= 1000
-                return f'{int(monthly_salary)} sur 12 mois'
+                return f'{int(monthly_salary)}'
             else:
                 return f'Salaire non indiqué'
     else:
@@ -657,6 +660,25 @@ def clean_ville(text):
     text = text.lower()
     text = text.title()
     return text
+
+def calculate_days(df):
+    today = datetime.now().replace(tzinfo=None)
+    if "date_publication" in df.columns:
+        df["date_publication"] = pd.to_datetime(df["date_publication"].dt.tz_localize(None))
+        df["days_since"] = (today - all["date_publication"]).dt.days
+    return df
+
+def cat_date(date):
+    if date == 0:
+        return "Aujourd'hui"
+    elif date == 1:
+        return "Hier"
+    elif date <= 7:
+        return "< 1 semaine"
+    elif date <= 31:
+        return "< 1 mois"
+    else:
+        return "1 mois ou plus"
 
 
 # Reordering/renaming
