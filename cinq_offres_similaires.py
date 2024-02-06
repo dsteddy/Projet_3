@@ -2,23 +2,21 @@ import pandas as pd
 import sklearn as sklearn
 import nltk
 import numpy as np
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.ensemble import RandomForestClassifier
 
 # import du dataframe all_jobs
-df = pd.read_parquet(r"C:\Users\lorra\Documents\WCS\Projet 3\databases\all_jobs.parquet")
+df = pd.read_parquet("datasets/all_jobs.parquet")
 
 # rajout d'une colonne cl_descr = description nettoyee
 df["cl_descr"] = np.nan
-for i in range(df.index.stop) : 
+for i in range(df.index.stop) :
     texte = df["description"][i]
     mots = nltk.word_tokenize(texte)
 
     stop_words = nltk.corpus.stopwords.words("french")
-    stop_ponc = [ ',' ,'!', '?', '(', ')', '[', ']', '-', '.', ':',';', '/', """'"""]  
-    
+    stop_ponc = [ ',' ,'!', '?', '(', ')', '[', ']', '-', '.', ':',';', '/', """'"""]
+
     cl_mots = []
     for word in mots:
         if word.lower() not in stop_words and word.lower() not in stop_ponc:
@@ -26,7 +24,7 @@ for i in range(df.index.stop) :
     print(cl_mots)
     #print(c_texte)
     df["cl_descr"][i] = cl_mots
-   
+
 
 #df_ml = df intermediaire avec selection des colonnes pour le ml
 features = ['contrat', 'intitule', 'secteur_activite', 'experience', 'ville', 'tech_skills', 'soft_skills', 'cl_descr']
@@ -35,17 +33,17 @@ df_ml = df[features]
 for feature in features:
   if df_ml[feature].isnull().any() or df_ml[feature].empty:
     df_ml[feature] = df[feature].fillna('', inplace=True)
-    
+
 df_ml["text_data"] = df_ml.fillna('').astype(str).apply(lambda x: ' '.join(x), axis=1)
 
 df["text_ml"] = np.nan
-for i in range(df.index.stop) : 
+for i in range(df.index.stop) :
     texte = df_ml["text_data"][i]
     mots = nltk.word_tokenize(texte)
 
     stop_words = nltk.corpus.stopwords.words("french")
-    stop_ponc = [ ',' ,'!', '?', '(', ')', '[', ']', '-', '.', ':',';', '/','_',"'"]  
-    
+    stop_ponc = [ ',' ,'!', '?', '(', ')', '[', ']', '-', '.', ':',';', '/','_',"'"]
+
     cl_mots = []
     for word in mots:
         if word.lower() not in stop_words and word.lower() not in stop_ponc:
@@ -64,7 +62,7 @@ count_matrix = tfidf.fit_transform(documents)
 
 cosine_sim = cosine_similarity(count_matrix)
 
-# index de l'offre que l'utilisateur aime : 
+# index de l'offre que l'utilisateur aime :
 user_likes_index = 24
 # Get the cosine similarity scores pour l'offre que l'utilisateur aime
 similarities = cosine_sim[user_likes_index]
