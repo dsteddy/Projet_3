@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.firefox.service import Service
+from webdriver_manager.firefox import GeckoDriverManager
 
 import nltk
 from nltk.corpus import stopwords
@@ -17,7 +19,8 @@ import json
 import sqlalchemy
 
 from offres_emploi import Api
-import datetime
+# import datetime
+from datetime import datetime
 
 import re
 
@@ -57,49 +60,42 @@ def scrapping(job_title: str, page : int = None):
         logging.info("Getting Data Analyst offers...")
         wttj_analyst = job_offers_wttj("data+analyst")
         wttj_analyst = clean_date(wttj_analyst)
+        wttj_analyst["metier"] = "Data Analyst"
 
         params = {
             "motsCles": "data analyst",
-            'minCreationDate': dt_to_str_iso(datetime.datetime(
-                2023, 12, 1, 12, 30
-            )),
-            'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
+            # 'minCreationDate': dt_to_str_iso(datetime.datetime(
+            #     2023, 12, 1, 12, 30
+            # )),
+            # 'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
         }
         pe_analyst = job_offers_pole_emploi(params)
         pe_analyst = clean_date(pe_analyst)
+        pe_analyst["metier"] = "Data Analyst"
 
         # Data Engineer
         logging.info("------------------------------")
         logging.info("Getting Data Engineer offers...")
         wttj_engineer = job_offers_wttj("data+engineer")
         wttj_engineer = clean_date(wttj_engineer)
+        wttj_engineer["metier"] = "Data Engineer"
 
-        params = {
-            "motsCles": "data engineer",
-            'minCreationDate': dt_to_str_iso(datetime.datetime(
-                2023, 9, 1, 12, 30
-            )),
-            'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
-        }
+        params["motsCles"] = "data engineer",
         pe_engineer = job_offers_pole_emploi(params)
         pe_engineer = clean_date(pe_engineer)
+        pe_engineer["metier"] = "Data Engineer"
 
         # Data Scientist
         logging.info("------------------------------")
         logging.info("Getting Data Scientist offers...")
         wttj_scientist = job_offers_wttj("data+scientist")
         wttj_scientist = clean_date(wttj_scientist)
+        wttj_scientist["metier"] = "Data Scientist"
 
-        params = {
-            "motsCles": "data scientist",
-            'minCreationDate': dt_to_str_iso(datetime.datetime(
-                2023, 9, 1, 12, 30
-            )),
-            'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
-        }
+        params["motsCles"] = "data scientist",
         pe_scientist = job_offers_pole_emploi(params)
         pe_scientist = clean_date(pe_scientist)
-
+        pe_scientist["metier"] = "Data Scientist"
 
         # Concat all
         logging.info("Regrouping dataframes...")
@@ -115,11 +111,13 @@ def scrapping(job_title: str, page : int = None):
             ignore_index=True
         )
         logging.info("Dropping duplicates...")
-        df = df.drop_duplicates(subset="description", keep="first")
+        df = df.drop_duplicates(subset="id", keep="first")
         df = extract_skills(df)
         df = clean_nan(df)
+        df["ville"] = df["ville"].apply(clean_ville)
         logging.info("Saving .parquet file...")
         df.to_parquet(f'datasets/all_jobs.parquet', index=False)
+        df.to_csv(f'datasets/all_jobs.csv', index=False)
         logging.info("Updating .sqlite DB...")
         create_sql_table(df)
         logging.info("Finished!")
@@ -139,10 +137,10 @@ def scrapping(job_title: str, page : int = None):
         # Pole Emploi
         params = {
             "motsCles": "data analyst",
-            'minCreationDate': dt_to_str_iso(datetime.datetime(
-                2023, 9, 1, 12, 30
-            )),
-            'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
+            # 'minCreationDate': dt_to_str_iso(datetime.datetime(
+            #     2023, 9, 1, 12, 30
+            # )),
+            # 'maxCreationDate': dt_to_str_iso(datetime.datetime.today()),
         }
         df_pole_emploi = job_offers_pole_emploi(params)
         df_pole_emploi = clean_date(df_pole_emploi)
@@ -157,6 +155,7 @@ def scrapping(job_title: str, page : int = None):
         logging.info("Regrouping both dataframes...")
         df = pd.concat([df_wttj, df_pole_emploi], ignore_index=True)
         df.to_parquet(f'datasets/{job_title_nom_fichier}.parquet', index=False)
+        df.to_csv(f'datasets/all_jobs.csv', index=False)
         logging.info("Finished!")
 
 
@@ -189,6 +188,7 @@ def job_offers_wttj(
     options.add_argument("--headless")
     driver = webdriver.Firefox(
         options=options,
+        service=Service(GeckoDriverManager().install()),
         )
     # Ouverture de la première page.
     if page == None:
@@ -214,7 +214,7 @@ def job_offers_wttj(
             driver.get(url)
             try:
                 # Récupère le lien de chaque offre d'emploi sur la page.
-                contents = WebDriverWait(driver, 30).until(
+                contents = WebDriverWait(driver, 50).until(
                     EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".sc-6i2fyx-0.gIvJqh"))
                 )
                 for content in contents:
@@ -253,13 +253,18 @@ async def fetch_all(
     df: pd.DataFrame : dataframe avec les colonnes nettoyées.
     '''
     logging.info("API requests...")
+    tasks = []
     async with aiohttp.ClientSession() as session:
-        tasks = [fetch(session, link) for link in api_links]
+        for link in api_links:
+            task = asyncio.create_task(fetch(session, link))
+            tasks.append(task)
+            await asyncio.sleep(0.07)
+            # tasks = [fetch(session, link) for link in api_links]
         responses = await asyncio.gather(*tasks)
-    logging.info("API requests done!")
+        logging.info("API requests done!")
 
-    logging.info("Creating dataframe...")
-    full_df = pd.concat([pd.json_normalize(resp["job"]) for resp in responses if "job" in resp], ignore_index=True)
+        logging.info("Creating dataframe...")
+        full_df = pd.concat([pd.json_normalize(resp["job"]) for resp in responses if "job" in resp], ignore_index=True)
 
     df = global_clean_wttj(full_df)
     logging.info("Welcome To The Jungle DataFrame done!")
@@ -312,9 +317,13 @@ def global_clean_wttj(df_to_clean):
     # Cleaning all remaining columns
     df["description"] = df["description"].apply(clean_html)
     df["organization.description"] = df["organization.description"].apply(clean_html)
-    df[df["salary_period"].isna()] = None
-    df[df["salary_max"].isna()] = None
-    df[df["salary_min"].isna()] = None
+    # df.fillna(
+    #     {
+    #         "salary_period" : None,
+    #         "salary_max" : None,
+    #         "salary_min" : None
+    # }, inplace=True
+    # )
     df["salaire"] = df.apply(lambda row: clean_salaire_wttj(
         row["salary_period"], row["salary_max"], row["salary_min"]
     ), axis = 1)
@@ -328,6 +337,8 @@ def global_clean_wttj(df_to_clean):
         ).str.replace("temporary", "CDD"
         ).str.replace("other", "Autre"
         ).str.replace("vie", "CDI"
+        ).str.replace("freelance", "Freelance"
+        ).str.replace("part_time", "CDI"
     )
     df["niveau_etudes"] = df["niveau_etudes"].astype(str)
     df["niveau_etudes"] = df["niveau_etudes"].apply(clean_niveau_etude)
@@ -514,7 +525,7 @@ def clean_niveau_etude(text) -> str:
     if "bac+2" in text or "bac_2" in text:
         return "Bac +2"
     else:
-        return "Aucune information"
+        return "Non spécifié"
 
 def clean_date(
         df: pd.DataFrame,
@@ -526,55 +537,55 @@ def clean_date(
     return df
 
 def clean_salaire_pe(text):
-    if text is not None:
+    if text:
         if "Annuel" in text:
             matches = re.findall(r'\d+,\d+', text)
             if matches:
                 salaries = [float(match.replace(',', '.')) for match in matches]
                 average_salary = sum(salaries) / len(salaries)
-                if "13 mois" in text:
-                    months = "13 mois"
-                else:
-                    months = "12 mois"
-                return f'{int(average_salary)} sur {months}'
+                # if "13 mois" in text:
+                #     months = "13 mois"
+                # else:
+                #     months = "12 mois"
+                return f'{int(average_salary)}'
         elif "Mensuel" in text:
             matches = re.findall(r'\d+,\d+', text)
             if matches:
                 monthly_salaries = [float(match.replace(',', '.')) for match in matches]
                 average_salary = sum(monthly_salaries) / len(monthly_salaries)
                 average_annual_salary = average_salary * 12
-                if "13 mois" in text:
-                    months = "13 mois"
-                else:
-                    months = "12 mois"
-                return f'{int(average_annual_salary)} sur {months}'
+                # if "13 mois" in text:
+                #     months = "13 mois"
+                # else:
+                #     months = "12 mois"
+                return f'{int(average_annual_salary)}'
         elif "Horaire" in text:
             matches = re.findall(r'\d+,\d+', text)
             if matches:
                 hourly_salaries = [float(match.replace(',', '.')) for match in matches]
                 average_salary = sum(hourly_salaries) / len(hourly_salaries)
                 average_annual_salary = average_salary * 35 * 52
-                return f'{int(average_annual_salary)} sur 12 mois'
+                return f'{int(average_annual_salary)}'
     return f'Salaire non indiqué'
 
 def clean_salaire_wttj(salary_period, salary_max, salary_min):
-    if salary_period is not None:
+    if salary_period:
         if salary_period == "yearly":
-            if salary_max is not None and salary_min is not None:
+            if salary_max and salary_min:
                 salary = (salary_max + salary_min) / 2
                 if salary < 100:
                     salary *= 1000
-                return f'{int(salary)} sur 12 mois'
+                return f'{int(salary)}'
             else:
                 return f'Salaire non indiqué'
         elif salary_period == "monthly":
-            if salary_max is not None and salary_min is not None:
+            if salary_max and salary_min:
                 monthly_max = salary_max * 12
                 monthly_min = salary_min * 12
                 monthly_salary = (monthly_max + monthly_min) / 2
                 if monthly_salary < 100:
                     salary *= 1000
-                return f'{int(monthly_salary)} sur 12 mois'
+                return f'{int(monthly_salary)}'
             else:
                 return f'Salaire non indiqué'
     else:
@@ -587,23 +598,54 @@ def clean_secteur_activite(text):
         return text
 
 def clean_experience(text):
-    if text == None or text == 'Débutant accepté (0 YEAR)':
+    if text == None or text in [
+        'Débutant accepté (0 YEAR)',
+        'LESS_THAN_6_MONTHS'
+    ]:
         text = "Débutant accepté"
     elif text == '6_MONTHS_TO_1_YEAR':
-        text = "6 mois à 1 an"
-    elif text == 'Expérience exigée de 1 An(s)':
+        text = "6 mois"
+    elif text in [
+        'Expérience exigée de 1 An(s)',
+        '1_TO_2_YEARS'
+    ]:
         text = "1 an"
-    elif text == '1_TO_2_YEARS':
-        text = "1 à 2 ans"
-    elif text == 'Expérience exigée de 2 An(s)' or text == '24 mois':
+    elif text in [
+        'Expérience exigée de 2 An(s)',
+        '24 mois',
+        '2_TO_3_YEARS'
+    ]:
         text = "2 ans"
-    elif text == 'Expérience exigée de 3 An(s)' or text == 'Expérience souhaitée de 3 An(s)':
+    elif text in [
+        'Expérience exigée de 3 An(s)',
+        'Expérience souhaitée de 3 An(s)',
+        '3_TO_4_YEARS',
+        '36 mois'
+    ]:
         text = "3 ans"
-    elif text == '5 ans - DATA ANALYST':
+    elif text in [
+        '4_TO_5_YEARS',
+        'Expérience exigée de 4 An(s)'
+    ]:
+        text = "4 ans"
+    elif text in [
+        '5 ans - DATA ANALYST',
+        '5 ans - 5 ans minimum',
+        'Expérience exigée de 5 An(s)',
+        '5_TO_7_YEARS',
+    ]:
         text = "5 ans"
-    elif text == '5 ans - 5 ans minimum' or text == 'Expérience exigée de 5 An(s)':
-        text = "5 ans"
-    elif text == 'Expérience exigée' or text == 'Expérience souhaitée':
+    elif text in [
+        'Expérience exigée de 6 An(s)',
+        '7_TO_10_YEARS',
+    ]:
+        text = "+5 ans"
+    elif text == '10_TO_15_YEARS':
+        text = "10 ans"
+    elif text in [
+        'Expérience exigée',
+        'Expérience souhaitée',
+    ]:
         text = "Non spécifié"
 
     return text
@@ -619,6 +661,12 @@ def clean_nan(df):
     }, inplace=True
     )
     return df
+
+def clean_ville(text):
+    text = text.replace("-", " ").replace("'", " ")
+    text = text.lower()
+    text = text.title()
+    return text
 
 
 # Reordering/renaming
@@ -655,6 +703,7 @@ def create_cols_to_keep(
         "updated_at",                   # date_modif
         "office.latitude",              # latitude
         "office.longitude",             # longitude
+        "reference",                         # id
     ]
     if site == "pole emploi":
         cols = [
@@ -674,6 +723,7 @@ def create_cols_to_keep(
                 "dateActualisation",        # date_modif
                 "latitude",                 # latitude
                 "longitude",                # longitude
+                "id",                       # id
             ]
     cols_to_keep = [col for col in cols if col in df.columns]
     return cols_to_keep
@@ -710,6 +760,7 @@ def rename_and_reorder_cols(
             'updated_at' : 'date_modif',
             'office.latitude' : 'latitude',
             'office.longitude' : 'longitude',
+            'reference' : 'id',
             }, axis = 1, inplace = True
         )
 
@@ -746,6 +797,7 @@ def reorder_cols(
     liste_cols: list: Liste contenant les colonnes dans l'ordre défini.
     '''
     liste_cols = [
+        "id",
         "date_publication",
         "contrat",
         "intitule",
@@ -897,6 +949,9 @@ def regroup_tech_skills(tech_skills):
         index = tech_skills.index("Power")
         tech_skills[index] = "PowerBI"
         tech_skills.remove("Bi")
+    if "Powerbi" in tech_skills:
+        index = tech_skills.index("Powerbi")
+        tech_skills[index] = "PowerBI"
     if "Data" in tech_skills and "Iku" in tech_skills:
         index = tech_skills.index("iku")
         tech_skills[index] = "Dataiku"
