@@ -117,6 +117,7 @@ def scrapping(job_title: str, page : int = None):
         df["ville"] = df["ville"].apply(clean_ville)
         logging.info("Saving .parquet file...")
         df.to_parquet(f'datasets/all_jobs.parquet', index=False)
+        df.to_csv(f'datasets/all_jobs.csv', index=False)
         logging.info("Updating .sqlite DB...")
         create_sql_table(df)
         logging.info("Finished!")
@@ -154,6 +155,7 @@ def scrapping(job_title: str, page : int = None):
         logging.info("Regrouping both dataframes...")
         df = pd.concat([df_wttj, df_pole_emploi], ignore_index=True)
         df.to_parquet(f'datasets/{job_title_nom_fichier}.parquet', index=False)
+        df.to_csv(f'datasets/all_jobs.csv', index=False)
         logging.info("Finished!")
 
 
